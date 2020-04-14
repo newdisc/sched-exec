@@ -1,0 +1,4 @@
+name,fullCommand
+Echo,echo %USERNAME%
+Set,set
+Dir,dir
