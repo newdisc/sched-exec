@@ -9,6 +9,8 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nd.sched.job.IJobExecutor;
+import nd.sched.job.IJobExecutor.JobReturn;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
 
@@ -27,6 +29,7 @@ public class ExecutorService {
             .map(cls -> extracted(cls))
             .filter(populator -> (null != populator))
             .collect(Collectors.toList());
+        jobRegistryPopulators.forEach(p -> p.registerJobs());
     }
 
     private IJobRegistryPopulator extracted(Class<? extends IJobRegistryPopulator> cls){try {
@@ -40,6 +43,12 @@ public class ExecutorService {
         logger.error(msg, e);
         return null;
     }}
+
+    public JobReturn execute(final String jobName, final String arguments) {
+        final IJobExecutor job = jobFactory.getJobExecutor(jobName);
+        final JobReturn jr = job.execute(arguments);
+        return jr;
+    }
 
     public IJobFactory getJobFactory() {
         return jobFactory;

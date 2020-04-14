@@ -13,11 +13,11 @@ import nd.sched.job.factory.JobFactory;
 
 public class ExecutorServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(ExecutorServiceTest.class);
-    private final ExecutorService execSvc = new ExecutorService();
-    private final IJobFactory jobFactory = new JobFactory();
 
     @Test
     public void execSvcTest(){
+        ExecutorService execSvc = new ExecutorService();
+        IJobFactory jobFactory = new JobFactory();
         execSvc.setJobFactory(jobFactory);
         execSvc.load();
         final IJobExecutor je = jobFactory.getJobExecutor("Sample");
@@ -25,5 +25,16 @@ public class ExecutorServiceTest {
         logger.info("Job Returned: {}", jr.returnValue);
         assertEquals(jr.jobStatus, IJobExecutor.JobStatus.SUCCESS);
         execSvc.jobRegistryPopulators.forEach(pop -> pop.printRegistry());        
+    }
+
+    @Test
+    public void executeTest(){
+        ExecutorService execSvc = new ExecutorService();
+        IJobFactory jobFactory = new JobFactory();
+        execSvc.setJobFactory(jobFactory);
+        execSvc.load();
+        final JobReturn jr = execSvc.execute("Sample", "Arguments");
+        logger.info("Job Returned: {}", jr.returnValue);
+        assertEquals(jr.jobStatus, IJobExecutor.JobStatus.SUCCESS);
     }
 }
