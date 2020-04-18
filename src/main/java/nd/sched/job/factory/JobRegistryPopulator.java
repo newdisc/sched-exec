@@ -29,18 +29,25 @@ public class JobRegistryPopulator implements IJobRegistryPopulator{
         je.setName("Sample");
         jobFactory.registerJobExecutor("Sample", je);
         logger.info("Registered Sample job");
-        HeaderColumnNameMappingStrategy<CommandJobExecutor> hcnms = new HeaderColumnNameMappingStrategy<>();
-        hcnms.setType(CommandJobExecutor.class);
-        try (final Reader reader = new FileReader(base + JOB_FILE); ) {
-            List<CommandJobExecutor> jobs = new CsvToBeanBuilder<CommandJobExecutor>(reader)
+        List<CommandJobExecutor> jobs = JobRegistryPopulator.createBeans(base + JOB_FILE, CommandJobExecutor.class);
+        if (null != jobs) {
+            jobs.forEach(exec -> jobFactory.registerJobExecutor(exec.getName(), exec));
+        }
+    }
+    public static <T> List<T> createBeans(final String filename, Class<T> typeClass) {
+        HeaderColumnNameMappingStrategy<T> hcnms = new HeaderColumnNameMappingStrategy<>();
+        hcnms.setType(typeClass);
+        try (final Reader reader = new FileReader(filename); ) {
+            List<T> jobs = new CsvToBeanBuilder<T>(reader)
                 .withMappingStrategy(hcnms)
                 .build()
                 .parse();
-            jobs.forEach(exec -> jobFactory.registerJobExecutor(exec.getName(), exec));
+            return jobs;
         } catch (IOException e) {
             final String msg = "Issue reading Job File";
             logger.error(msg, e);
         }
+        return null;
     }
     @Override
     public void printRegistry(){

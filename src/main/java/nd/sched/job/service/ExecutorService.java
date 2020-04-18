@@ -14,7 +14,7 @@ import nd.sched.job.IJobExecutor.JobReturn;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
 
-public class ExecutorService {
+public class ExecutorService implements IExecutorService {
     private static final Logger logger = LoggerFactory.getLogger(ExecutorService.class);
     private static final String JOB_REGISTRY_POP_PACKAGE = "nd.sched.job.factory";
     private static final String BASE_DIR = ".";
@@ -44,6 +44,7 @@ public class ExecutorService {
         return null;
     }}
 
+    @Override
     public JobReturn execute(final String jobName, final String arguments) {
         final IJobExecutor job = jobFactory.getJobExecutor(jobName);
         final JobReturn jr = job.execute(arguments);

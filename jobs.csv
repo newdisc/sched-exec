@@ -1,4 +1,5 @@
 name,fullCommand
-Echo,echo %USERNAME%
-Set,set
-Dir,dir
+EchoJob,echo %USERNAME%
+SetJob,set
+DirJob,dir
+SleepJob,ping 127.0.0.1 -n 

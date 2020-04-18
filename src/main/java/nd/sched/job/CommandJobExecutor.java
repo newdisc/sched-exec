@@ -11,12 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommandJobExecutor implements IJobExecutor {
-    private static final Logger logger = LoggerFactory.getLogger(CommandJobExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(
+        "nd.sched.job.service.run." + CommandJobExecutor.class.getName());
 
     private String name;
     private final List<String> osCommand;
     private String fullCommand;
-    private JobStatus status = JobStatus.IDLE;
 
     public CommandJobExecutor(){
         final String[] shell = OSCommand.getCommand();
@@ -38,7 +38,6 @@ public class CommandJobExecutor implements IJobExecutor {
         final ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
         logger.info("Executing: {}", processBuilder.command());
         final JobReturn jr = new JobReturn();
-        status = JobStatus.RUNNING;
         final int ret = execute(processBuilder);
         switch (ret) {
             case 0:
@@ -48,7 +47,6 @@ public class CommandJobExecutor implements IJobExecutor {
                 jr.jobStatus = JobStatus.FAILURE;
                 break;
         }
-        status = jr.jobStatus;
         return jr;
     }
     public static int execute(final ProcessBuilder pb) {
@@ -67,9 +65,6 @@ public class CommandJobExecutor implements IJobExecutor {
             logger.error(msg, e);
             return -1;
         }
-    }
-    public JobStatus getStatus() {
-        return status;
     }
     public void setName(String name) {
         this.name = name;
