@@ -2,10 +2,10 @@ package nd.sched.job.service;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class AsyncExecutorFacade implements Closeable {
     IExecutorService service;
     ExecutorService javaExecutorService;
 
-    public static class CallableWorker implements Callable<JobReturn> {
+    public static class CallableWorker implements Supplier<JobReturn> {
         private static final Logger loggerIn = LoggerFactory.getLogger("nd.sched.job.service.run.CallableWorker");
         private static final String LOGFILENAME = "logFileName";
         protected String jobName;
@@ -30,7 +30,7 @@ public class AsyncExecutorFacade implements Closeable {
             arguments = arg;
         }
         @Override
-        public JobReturn call() throws Exception {
+        public JobReturn get() {
             final Thread current = Thread.currentThread();
             final String name = jobName + "-" + arguments + "-" + current.getId() + "-" + 
                 Integer.toString((int)(Math.random() * 100));
@@ -54,15 +54,18 @@ public class AsyncExecutorFacade implements Closeable {
         logger.info("Shutting down the fixed thread pool");
         javaExecutorService.shutdown();
     }
-    public Future<JobReturn> execute(final String jobName, final String arguments){
+    public CompletableFuture<JobReturn> execute(final String jobName, final String arguments){
         final CallableWorker worker = new CallableWorker(service, jobName, arguments);
         logger.info("Submitting Job: {} with arguments: {}", jobName, arguments);
-        return javaExecutorService.submit(worker);
+        return CompletableFuture.supplyAsync(worker, javaExecutorService);
     }
     public IExecutorService getService() {
         return service;
     }
     public void setService(IExecutorService service) {
         this.service = service;
+    }
+    public ExecutorService getExecutor(){
+        return javaExecutorService;
     }
 }

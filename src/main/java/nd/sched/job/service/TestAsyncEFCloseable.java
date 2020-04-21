@@ -27,6 +27,7 @@ public class TestAsyncEFCloseable implements Closeable {
     }
     @Override
     public void close() throws IOException {
-       asyncSvc.close();
+        logger.info("Closing the Async Service");
+        asyncSvc.close();
     }
 }
