@@ -32,6 +32,9 @@ public class JobRegistryPopulator implements IJobRegistryPopulator{
         List<CommandJobExecutor> jobs = JobRegistryPopulator.createBeans(base + JOB_FILE, CommandJobExecutor.class);
         if (null != jobs) {
             jobs.forEach(exec -> jobFactory.registerJobExecutor(exec.getName(), exec));
+            jobs.forEach(exec -> {
+                logger.info("Registered job: {}", exec.getName());
+            });
         }
     }
     public static <T> List<T> createBeans(final String filename, Class<T> typeClass) {

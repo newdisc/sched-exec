@@ -33,7 +33,7 @@ public class ExecutorService implements IExecutorService {
     }
 
     private IJobRegistryPopulator extracted(Class<? extends IJobRegistryPopulator> cls){try {
-        logger.info("Loading: {}", cls.getName());
+        logger.debug("Loading: {}", cls.getName());
         return cls
             .getDeclaredConstructor(IJobFactory.class, String.class)
             .newInstance(jobFactory, BASE_DIR);

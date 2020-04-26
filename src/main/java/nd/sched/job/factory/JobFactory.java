@@ -1,5 +1,6 @@
 package nd.sched.job.factory;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -27,5 +28,8 @@ public class JobFactory implements IJobFactory {
     @Override
     public void printJobsRegistered() {
         logger.info("Registered Jobs: {}", registry);
+    }
+    public Map<String, IJobExecutor> getRegistry(){
+        return registry;
     }
 }
