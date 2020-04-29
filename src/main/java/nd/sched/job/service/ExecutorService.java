@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import nd.sched.job.IJobExecutor;
 import nd.sched.job.IJobExecutor.JobReturn;
+import nd.sched.job.IJobExecutor.JobStatus;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
 
@@ -26,13 +27,13 @@ public class ExecutorService implements IExecutorService {
         Set<Class<? extends IJobRegistryPopulator>> subTypes = reflections.getSubTypesOf(IJobRegistryPopulator.class);
         jobRegistryPopulators = subTypes
             .stream()
-            .map(cls -> extracted(cls))
+            .map(cls -> createPopulatorInstance(cls))
             .filter(populator -> (null != populator))
             .collect(Collectors.toList());
         jobRegistryPopulators.forEach(p -> p.registerJobs());
     }
 
-    private IJobRegistryPopulator extracted(Class<? extends IJobRegistryPopulator> cls){try {
+    private IJobRegistryPopulator createPopulatorInstance(Class<? extends IJobRegistryPopulator> cls){try {
         logger.debug("Loading: {}", cls.getName());
         return cls
             .getDeclaredConstructor(IJobFactory.class, String.class)
@@ -47,7 +48,14 @@ public class ExecutorService implements IExecutorService {
     @Override
     public JobReturn execute(final String jobName, final String arguments) {
         final IJobExecutor job = jobFactory.getJobExecutor(jobName);
-        final JobReturn jr = job.execute(arguments);
+        final JobReturn jr;
+        if (null!=job) {
+            jr = job.execute(arguments);
+        } else {
+            jr = new JobReturn();
+            jr.jobStatus = JobStatus.FAILURE;
+            jr.returnValue = "Job NOT found!";
+        }
         return jr;
     }
 
