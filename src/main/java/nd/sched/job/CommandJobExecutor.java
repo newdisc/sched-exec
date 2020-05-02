@@ -72,4 +72,7 @@ public class CommandJobExecutor implements IJobExecutor {
     public void setFullCommand(final String cmd) {
         fullCommand = cmd;
     }
+    public String getFullCommand(){
+        return fullCommand;
+    }
 }
