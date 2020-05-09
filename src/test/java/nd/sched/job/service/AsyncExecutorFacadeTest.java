@@ -19,7 +19,7 @@ public class AsyncExecutorFacadeTest {
     public void runJobs(){
         try (TestAsyncEFCloseable asyncSvcTst = new TestAsyncEFCloseable()) {
             AsyncExecutorFacade asyncSvc = asyncSvcTst.asyncSvc;
-            final Future<JobReturn> fjr = asyncSvc.execute("SleepJob", "15");
+            final Future<JobReturn> fjr = asyncSvc.execute("Trigger", "SleepJob", "15");
             final JobReturn jr = fjr.get();
             logger.info("Job Returned: {}", jr.returnValue);
             assertEquals(jr.jobStatus, IJobExecutor.JobStatus.SUCCESS);
