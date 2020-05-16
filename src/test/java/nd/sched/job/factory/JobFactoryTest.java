@@ -27,8 +27,8 @@ public class JobFactoryTest {
     public void executeTest(){
         final IJobExecutor je = jobFactory.getJobExecutor("Sample");
         final JobReturn jr = je.execute("Arguments1");
-        logger.info("Job Return: {}", jr.returnValue);
-        assertEquals(jr.jobStatus, JobStatus.SUCCESS);
+        logger.info("Job Return: {}", jr.getReturnValue());
+        assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
     }
 
 }

@@ -17,8 +17,8 @@ public class JobExecutor implements IJobExecutor {
     public JobReturn execute(String argumentString) {
         logger.info("Hello World from {}", name);
         JobReturn jReturn = new JobReturn();
-        jReturn.jobStatus = JobStatus.SUCCESS;
-        jReturn.returnValue = "SUCCESS";
+        jReturn.setJobStatus(JobStatus.SUCCESS);
+        jReturn.setReturnValue("SUCCESS");
         return jReturn;
     }
     @Override

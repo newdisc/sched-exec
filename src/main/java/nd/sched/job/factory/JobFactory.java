@@ -2,16 +2,19 @@ package nd.sched.job.factory;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.IJobExecutor;
+import nd.sched.util.UtilException;
 
 public class JobFactory implements IJobFactory {
     private static final Logger logger = LoggerFactory.getLogger(JobFactory.class);
@@ -39,14 +42,14 @@ public class JobFactory implements IJobFactory {
     }
     public List<String> getJobLogs(final String job) {
         final String jobpat = "JobRun-.*" + job + ".*.log";
-        try {
-            return Files.walk(Paths.get("./logs")).filter(Files::isRegularFile)
+        try (final Stream<Path> logfiles = Files.walk(Paths.get("./logs"));){
+            return logfiles.filter(Files::isRegularFile)
                 .map(f -> f.getFileName().toString())
                 .filter(f -> f.matches(jobpat)).collect(Collectors.toList());
         } catch (IOException e) {
             final String msg = "Issue listing Job Log Files";
-            logger.error(msg, e);
-            throw new RuntimeException(msg, e);
+            //logger.error(msg, e);
+            throw new UtilException(msg, e);
         }
     }
 }

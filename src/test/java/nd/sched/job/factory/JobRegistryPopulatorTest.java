@@ -24,8 +24,8 @@ public class JobRegistryPopulatorTest {
         jobRegistryPopulator.registerJobs();
         final IJobExecutor je = jobFactory.getJobExecutor("Echo");
         final JobReturn jr = je.execute("Arguments JobRegistryPopulatorTest");
-        logger.info("Job Returned: {}", jr.returnValue);
-        assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.jobStatus);
+        logger.info("Job Returned: {}", jr.getReturnValue());
+        assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
         jobRegistryPopulator.printRegistry();
     }
 }

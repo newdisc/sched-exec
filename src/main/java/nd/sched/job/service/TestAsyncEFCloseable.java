@@ -11,7 +11,7 @@ import nd.sched.job.factory.JobFactory;
 
 public class TestAsyncEFCloseable implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(TestAsyncEFCloseable.class);
-    public AsyncExecutorFacade asyncSvc;
+    protected AsyncExecutorFacade asyncSvc;
     public TestAsyncEFCloseable(){
         final String cwd = Paths.get(".")
             .toAbsolutePath()

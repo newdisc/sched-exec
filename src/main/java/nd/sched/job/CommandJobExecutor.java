@@ -39,16 +39,13 @@ public class CommandJobExecutor implements IJobExecutor {
         logger.info("Executing: {}", processBuilder.command());
         final JobReturn jr = new JobReturn();
         final int ret = execute(processBuilder);
-        switch (ret) {
-            case 0:
-                jr.jobStatus = JobStatus.SUCCESS;
-                break;
-            default:
-                jr.jobStatus = JobStatus.FAILURE;
-                break;
+        jr.setJobStatus(JobStatus.FAILURE);
+        if (0 == ret) {
+            jr.setJobStatus(JobStatus.SUCCESS);
         }
         return jr;
     }
+    @SuppressWarnings("squid:S2142")
     public static int execute(final ProcessBuilder pb) {
         try {
             final Process process = pb.start();

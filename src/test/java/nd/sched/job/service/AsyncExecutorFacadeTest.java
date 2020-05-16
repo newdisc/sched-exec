@@ -21,8 +21,8 @@ public class AsyncExecutorFacadeTest {
             AsyncExecutorFacade asyncSvc = asyncSvcTst.asyncSvc;
             final Future<JobReturn> fjr = asyncSvc.execute("Trigger", "SleepJob", "15");
             final JobReturn jr = fjr.get();
-            logger.info("Job Returned: {}", jr.returnValue);
-            assertEquals(jr.jobStatus, IJobExecutor.JobStatus.SUCCESS);
+            logger.info("Job Returned: {}", jr.getReturnValue());
+            assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
         } catch (IOException | InterruptedException | ExecutionException e) {
             final String msg = "Issue shutting down the async Service / running the task";    
             logger.error(msg, e);

@@ -22,8 +22,8 @@ public class CommandJobExecutorTest {
     @Test
     public void execTest(){
         JobReturn jr = command.execute("");
-        logger.info("Job result: {}", jr.returnValue);
-        assertEquals(jr.jobStatus, JobStatus.SUCCESS);
+        logger.info("Job result: {}", jr.getReturnValue());
+        assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
     }
 
 }

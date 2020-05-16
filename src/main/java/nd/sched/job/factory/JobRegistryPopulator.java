@@ -3,6 +3,7 @@ package nd.sched.job.factory;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -32,25 +33,24 @@ public class JobRegistryPopulator implements IJobRegistryPopulator{
         List<CommandJobExecutor> jobs = JobRegistryPopulator.createBeans(base + JOB_FILE, CommandJobExecutor.class);
         if (null != jobs) {
             jobs.forEach(exec -> jobFactory.registerJobExecutor(exec.getName(), exec));
-            jobs.forEach(exec -> {
-                logger.info("Registered job: {}", exec.getName());
-            });
+            jobs.forEach(exec -> 
+                logger.info("Registered job: {}", exec.getName())
+            );
         }
     }
     public static <T> List<T> createBeans(final String filename, Class<T> typeClass) {
         HeaderColumnNameMappingStrategy<T> hcnms = new HeaderColumnNameMappingStrategy<>();
         hcnms.setType(typeClass);
         try (final Reader reader = new FileReader(filename); ) {
-            List<T> jobs = new CsvToBeanBuilder<T>(reader)
+            return new CsvToBeanBuilder<T>(reader)
                 .withMappingStrategy(hcnms)
                 .build()
                 .parse();
-            return jobs;
         } catch (IOException e) {
             final String msg = "Issue reading Job File";
             logger.error(msg, e);
         }
-        return null;
+        return new ArrayList<>();
     }
     @Override
     public void printRegistry(){

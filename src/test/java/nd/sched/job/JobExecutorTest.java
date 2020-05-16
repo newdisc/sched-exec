@@ -24,6 +24,6 @@ public class JobExecutorTest {
     public void executeTest(){
         jobExecutor.setName(TEST_NAME);
         final JobReturn ret = jobExecutor.execute(TEST_ARGS);
-        assertEquals(IJobExecutor.JobStatus.SUCCESS, ret.jobStatus);
+        assertEquals(IJobExecutor.JobStatus.SUCCESS, ret.getJobStatus());
     }
 }

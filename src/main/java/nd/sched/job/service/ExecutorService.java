@@ -2,6 +2,7 @@ package nd.sched.job.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,17 +21,18 @@ public class ExecutorService implements IExecutorService {
     private static final String JOB_REGISTRY_POP_PACKAGE = "nd.sched.job.factory";
     private static final String BASE_DIR = ".";
     private IJobFactory jobFactory;
-    public List<IJobRegistryPopulator> jobRegistryPopulators;
+    private List<IJobRegistryPopulator> jobRegistryPopulators;
 
     public void load() {
         Reflections reflections = new Reflections(JOB_REGISTRY_POP_PACKAGE);
         Set<Class<? extends IJobRegistryPopulator>> subTypes = reflections.getSubTypesOf(IJobRegistryPopulator.class);
         jobRegistryPopulators = subTypes
             .stream()
-            .map(cls -> createPopulatorInstance(cls))
-            .filter(populator -> (null != populator))
+            .map(this::createPopulatorInstance)
+            //.map(cls -> createPopulatorInstance(cls))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        jobRegistryPopulators.forEach(p -> p.registerJobs());
+        jobRegistryPopulators.forEach(IJobRegistryPopulator::registerJobs);
     }
 
     private IJobRegistryPopulator createPopulatorInstance(Class<? extends IJobRegistryPopulator> cls){try {
@@ -53,8 +55,8 @@ public class ExecutorService implements IExecutorService {
             jr = job.execute(arguments);
         } else {
             jr = new JobReturn();
-            jr.jobStatus = JobStatus.FAILURE;
-            jr.returnValue = "Job NOT found!";
+            jr.setJobStatus(JobStatus.FAILURE);
+            jr.setReturnValue("Job NOT found!");
         }
         return jr;
     }

@@ -5,3 +5,5 @@ set PATH=%JAVA_HOME%\bin;%MAVEN_HOME%\bin;%PATH%
 
 mvn exec:java -Dexec.mainClass="nd.vc.FileSystemNode" -Dexec.args="C:/dev/gtake"
 mvn exec:java -Dexec.mainClass="nd.sched.web.SpringRestServer" -Dexec.args="args1 args2"
+
+mvn sonar:sonar -Dsonar.projectKey=nd.sched:executor -Dsonar.host.url=http://localhost:9000 -Dsonar.login=ea4bf243763d37a6949fb0a3074bade1113b1794

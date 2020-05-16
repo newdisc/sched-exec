@@ -2,6 +2,7 @@ package nd.sched.job.service;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,11 +34,12 @@ public class AsyncExecutorFacade implements Closeable {
             jobName = jn;
             arguments = arg;
         }
+        @SuppressWarnings("squid:S2696")
         @Override
         public JobReturn get() {
             final Thread current = Thread.currentThread();
             final String name = triggerName + "-" + jobName + "-" + arguments + "-" + 
-                current.getId() + "-" + Integer.toString((int)(Math.random() * 100));
+                current.getId() + "-" + Integer.toString((new SecureRandom()).nextInt());
             current.setName(name);
             MDC.put(LOGFILENAME,name);
             loggerIn.info("Starting Job: {} with arguments: {} on thread: {}", jobName, arguments, current.getId());

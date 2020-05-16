@@ -22,9 +22,9 @@ public class ExecutorServiceTest {
         execSvc.load();
         final IJobExecutor je = jobFactory.getJobExecutor("Sample");
         final JobReturn jr = je.execute("Arguments JobRegistryPopulatorTest");
-        logger.info("Job Returned: {}", jr.returnValue);
-        assertEquals(jr.jobStatus, IJobExecutor.JobStatus.SUCCESS);
-        execSvc.jobRegistryPopulators.forEach(pop -> pop.printRegistry());        
+        logger.info("Job Returned: {}", jr.getReturnValue());
+        assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
+        execSvc.getJobRegistryPopulators().forEach(pop -> pop.printRegistry());        
     }
 
     @Test
@@ -34,7 +34,7 @@ public class ExecutorServiceTest {
         execSvc.setJobFactory(jobFactory);
         execSvc.load();
         final JobReturn jr = execSvc.execute("Sample", "Arguments");
-        logger.info("Job Returned: {}", jr.returnValue);
-        assertEquals(jr.jobStatus, IJobExecutor.JobStatus.SUCCESS);
+        logger.info("Job Returned: {}", jr.getReturnValue());
+        assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
     }
 }
