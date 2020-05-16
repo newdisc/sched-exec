@@ -25,6 +25,7 @@ public class AsyncExecutorFacade implements Closeable {
         protected String jobName;
         protected String arguments;
         protected IExecutorService service;
+        private static int i=0;
         public CallableWorker(final IExecutorService svc, final String tn, final String jn, 
             final String arg) {
             service = svc;
@@ -43,6 +44,9 @@ public class AsyncExecutorFacade implements Closeable {
             final JobReturn jr = service.execute(jobName, arguments);
             loggerIn.info("Completed Job: {} with arguments: {} with return : {}", jobName, arguments, jr);
             MDC.remove(LOGFILENAME);
+            final String thrName = "AsyncExecutorthread-" + i;
+            i++;
+            current.setName(thrName);
             return jr;
         }
     }
