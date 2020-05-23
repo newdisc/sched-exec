@@ -3,6 +3,8 @@ package nd.sched.job.service;
 import java.io.Closeable;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +24,7 @@ public class AsyncExecutorFacade implements Closeable {
     public static class CallableWorker implements Supplier<JobReturn> {
         private static final Logger loggerIn = LoggerFactory.getLogger("nd.sched.job.service.run.CallableWorker");
         private static final String LOGFILENAME = "logFileName";
+        private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         protected String triggerName;
         protected String jobName;
         protected String arguments;
@@ -38,7 +41,8 @@ public class AsyncExecutorFacade implements Closeable {
         @Override
         public JobReturn get() {
             final Thread current = Thread.currentThread();
-            final String name = triggerName + "-" + jobName + "-" + arguments + "-" + 
+            final LocalDateTime now = LocalDateTime.now();
+            final String name = triggerName + "-" + jobName + "-" + now.format(formatter) + "-" + 
                 current.getId() + "-" + Integer.toString((new SecureRandom()).nextInt());
             current.setName(name);
             MDC.put(LOGFILENAME,name);
