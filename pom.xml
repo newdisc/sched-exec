@@ -27,10 +27,10 @@
             <version>0.9.12</version>
         </dependency>        
         <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>5.1</version>
-        </dependency>
+            <groupId>nd.sched</groupId>
+            <artifactId>dataclient</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency> 
     </dependencies>
     <build>
         <plugins>
