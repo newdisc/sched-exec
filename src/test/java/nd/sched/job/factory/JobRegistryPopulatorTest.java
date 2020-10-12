@@ -22,7 +22,7 @@ public class JobRegistryPopulatorTest {
         final String pwd = currentRelativePath.toAbsolutePath().toString();        
         logger.info("CWD: {}", pwd);
         jobRegistryPopulator.registerJobs();
-        final IJobExecutor je = jobFactory.getJobExecutor("Echo");
+        final IJobExecutor je = jobFactory.getJobExecutor("EchoJob");
         final JobReturn jr = je.execute("Arguments JobRegistryPopulatorTest");
         logger.info("Job Returned: {}", jr.getReturnValue());
         assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());

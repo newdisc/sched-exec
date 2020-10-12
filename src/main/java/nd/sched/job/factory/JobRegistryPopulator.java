@@ -13,11 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.CommandJobExecutor;
+import nd.sched.job.JavaJobExecutor;
 import nd.sched.job.JobExecutor;
 
 public class JobRegistryPopulator implements IJobRegistryPopulator{
     private static final Logger logger = LoggerFactory.getLogger(JobRegistryPopulator.class);
     private static final String JOB_FILE = "/jobs.csv";
+    private static final String JAVA_JOB_FILE = "/java.jobs.csv";
     private final IJobFactory jobFactory;
     private final String base;
     public JobRegistryPopulator(IJobFactory jf, final String baseDir){
@@ -31,12 +33,15 @@ public class JobRegistryPopulator implements IJobRegistryPopulator{
         jobFactory.registerJobExecutor("Sample", je);
         logger.info("Registered Sample job");
         List<CommandJobExecutor> jobs = JobRegistryPopulator.createBeans(base + JOB_FILE, CommandJobExecutor.class);
-        if (null != jobs) {
-            jobs.forEach(exec -> jobFactory.registerJobExecutor(exec.getName(), exec));
-            jobs.forEach(exec -> 
-                logger.info("Registered job: {}", exec.getName())
-            );
-        }
+        List<JavaJobExecutor> javaJobs = JobRegistryPopulator.createBeans(base + JAVA_JOB_FILE, JavaJobExecutor.class);
+        jobs.forEach(exec -> {
+        	jobFactory.registerJobExecutor(exec.getName(), exec);
+        	logger.info("Registered job: {}", exec.getName());
+        });
+        javaJobs.forEach(jj -> {
+        	jobFactory.registerJobExecutor(jj.getName(), jj);
+            logger.info("Registered Java job: {}", jj.getName());
+        });
     }
     public static <T> List<T> createBeans(final String filename, Class<T> typeClass) {
         HeaderColumnNameMappingStrategy<T> hcnms = new HeaderColumnNameMappingStrategy<>();
