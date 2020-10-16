@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class JavaJobExecutor implements IJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
-        "nd.sched.job.service.run." + JavaJobExecutor.class.getName());
+        "nd.sched.job.service.run." + JavaJobExecutor.class.getSimpleName());
 
     private String name;
     private String mainClass;

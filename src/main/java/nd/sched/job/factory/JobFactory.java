@@ -41,7 +41,7 @@ public class JobFactory implements IJobFactory {
         return registry;
     }
     public List<String> getJobLogs(final String job) {
-        final String jobpat = "JobRun-.*" + job + ".*.log";
+        final String jobpat = ".*" + job + ".*.log";
         try (final Stream<Path> logfiles = Files.walk(Paths.get("./logs"));){
             return logfiles.filter(Files::isRegularFile)
                 .map(f -> f.getFileName().toString())

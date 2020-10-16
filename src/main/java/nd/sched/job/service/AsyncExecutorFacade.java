@@ -22,9 +22,9 @@ public class AsyncExecutorFacade implements Closeable {
     ExecutorService javaExecutorService;
 
     public static class CallableWorker implements Supplier<JobReturn> {
-        private static final Logger loggerIn = LoggerFactory.getLogger("nd.sched.job.service.run.CallableWorker");
+        private static final Logger loggerIn = LoggerFactory.getLogger("nd.sched.job.service.run." + CallableWorker.class.getSimpleName());
         private static final String LOGFILENAME = "logFileName";
-        private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         protected String triggerName;
         protected String jobName;
         protected String arguments;
@@ -42,13 +42,14 @@ public class AsyncExecutorFacade implements Closeable {
         public JobReturn get() {
             final Thread current = Thread.currentThread();
             final LocalDateTime now = LocalDateTime.now();
-            final String name = triggerName + "-" + jobName + "-" + now.format(formatter) + "-" + 
-                current.getId() + "-" + Integer.toString((new SecureRandom()).nextInt());
-            current.setName(name);
+            final String name = now.format(formatter) + "-" + current.getId() + "-" + triggerName + "-" + jobName + "-"; 
+            current.setName(triggerName + current.getId());
             MDC.put(LOGFILENAME,name);
-            loggerIn.info("Starting Job: {} with arguments: {} on thread: {}", jobName, arguments, current.getId());
+            loggerIn.debug("Starting Job: {} with arguments: {} on thread: {}", jobName, arguments, current.getId());
+            loggerIn.info("=======================================================");
             final JobReturn jr = service.execute(jobName, arguments);
-            loggerIn.info("Completed Job: {} with arguments: {} with return : {}", jobName, arguments, jr);
+            loggerIn.info("=======================================================");
+            loggerIn.debug("Completed Job: {} with arguments: {} with return : {}", jobName, arguments, jr);
             MDC.remove(LOGFILENAME);
             final String thrName = "AsyncExecutorthread-" + i;
             i++;
@@ -70,7 +71,7 @@ public class AsyncExecutorFacade implements Closeable {
     public CompletableFuture<JobReturn> execute(final String triggerName, final String jobName, 
         final String arguments){
         final CallableWorker worker = new CallableWorker(service, triggerName, jobName, arguments);
-        logger.info("Submitting Job: {} with arguments: {}", jobName, arguments);
+        logger.debug("Submitting Job: {} with arguments: {}", jobName, arguments);
         return CompletableFuture.supplyAsync(worker, javaExecutorService);
     }
     public IExecutorService getService() {

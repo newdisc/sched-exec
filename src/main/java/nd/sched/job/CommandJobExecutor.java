@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class CommandJobExecutor implements IJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
-        "nd.sched.job.service.run." + CommandJobExecutor.class.getName());
+        "nd.sched.job.service.run." + CommandJobExecutor.class.getSimpleName());
 
     private String name;
     private final List<String> osCommand;
@@ -31,10 +31,12 @@ public class CommandJobExecutor implements IJobExecutor {
     public JobReturn execute(String argumentString) {
         final List<String> cmdList = new ArrayList<>();
         cmdList.addAll(osCommand);
+        String execCommand = "";
         if (null != fullCommand) {
-            cmdList.add(fullCommand);
+        	execCommand = fullCommand;
         }
-        cmdList.add(argumentString);
+        execCommand = execCommand + " " + argumentString;
+        cmdList.add(execCommand);
         final ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
         logger.info("Executing: {}", processBuilder.command());
         final JobReturn jr = new JobReturn();
@@ -48,6 +50,7 @@ public class CommandJobExecutor implements IJobExecutor {
     @SuppressWarnings("squid:S2142")
     public static int execute(final ProcessBuilder pb) {
         try {
+        	pb.redirectErrorStream();
             final Process process = pb.start();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
