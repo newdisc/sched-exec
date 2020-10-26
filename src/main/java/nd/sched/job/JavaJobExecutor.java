@@ -3,7 +3,6 @@ package nd.sched.job;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +25,7 @@ public class JavaJobExecutor implements IJobExecutor {
 			Object result = mainMethod.invoke(null, (Object)arguments);
 	        jr.setJobStatus(JobStatus.SUCCESS);
 	        logger.info("Returned");
+	        logger.debug("Returned: {}", result);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             final String msg = "ERROR executing: " + mainClass + ".main " + argsString;
             logger.error(msg, e);
