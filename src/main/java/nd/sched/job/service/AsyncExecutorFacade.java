@@ -41,7 +41,7 @@ public class AsyncExecutorFacade implements Closeable {
         public JobReturn get() {
             final Thread current = Thread.currentThread();
             final LocalDateTime now = LocalDateTime.now();
-            final String name = now.format(formatter) + "-" + current.getId() + "-" + triggerName + "-" + jobName + "-"; 
+            final String name = now.format(formatter) + "-" + current.getId() + "-" + triggerName + "-" + jobName; 
             current.setName(triggerName + current.getId());
             MDC.put(LOGFILENAME,name);
             loggerIn.debug("Starting Job: {} with arguments: {} on thread: {}", jobName, arguments, current.getId());

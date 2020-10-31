@@ -50,7 +50,7 @@ public class CommandJobExecutor implements IJobExecutor {
     @SuppressWarnings("squid:S2142")
     public static int execute(final ProcessBuilder pb) {
         try {
-        	pb.redirectErrorStream();
+        	pb.redirectErrorStream(true);
             final Process process = pb.start();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
