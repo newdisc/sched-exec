@@ -1,7 +1,7 @@
 package nd.sched.job;
 
 public interface IJobExecutor {
-    public enum JobStatus {IDLE, RUNNING, SUCCESS, FAILURE}
+    public enum JobStatus {CREATED, RUNNING, SUCCESS, FAILURE}
     public static class JobReturn {
         private String returnValue;
         private JobStatus jobStatus;
