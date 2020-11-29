@@ -1,0 +1,5 @@
+type,name,fullCommand
+CommandJob,EchoJob,echo %USERNAME%
+CommandJob,SetJob,set
+CommandJob,DirJob,dir
+CommandJob,SleepJob,ping 127.0.0.1 -n 

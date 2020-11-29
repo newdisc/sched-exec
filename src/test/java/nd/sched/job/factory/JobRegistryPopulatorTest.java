@@ -15,7 +15,7 @@ import nd.sched.job.IJobExecutor.JobReturn;
 public class JobRegistryPopulatorTest {
     private static final Logger logger = LoggerFactory.getLogger(JobRegistryPopulatorTest.class);
     private final JobFactory jobFactory = new JobFactory();
-    private final JobRegistryPopulator jobRegistryPopulator = new JobRegistryPopulator(jobFactory,".");
+    private final IJobRegistryPopulator jobRegistryPopulator = (new JobRegistryPopulator()).setFactory(jobFactory);
     @Test
     public void registeredSampleTest(){
         final Path currentRelativePath = Paths.get("");
@@ -26,6 +26,6 @@ public class JobRegistryPopulatorTest {
         final JobReturn jr = je.execute("Arguments JobRegistryPopulatorTest");
         logger.info("Job Returned: {}", jr.getReturnValue());
         assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
-        jobRegistryPopulator.printRegistry();
+        //jobRegistryPopulator.printRegistry();
     }
 }

@@ -7,14 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.IJobExecutor;
-import nd.sched.job.IJobExecutor.JobReturn;
 import nd.sched.job.JobExecutor;
+import nd.sched.job.IJobExecutor.JobReturn;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.JobFactory;
 
-public class ExecutorServiceTest {
-    private static final Logger logger = LoggerFactory.getLogger(ExecutorServiceTest.class);
-
+public class DefaultExecutorServiceTest {
+	private static final Logger logger = LoggerFactory.getLogger(DefaultExecutorServiceTest.class);
     @Test
     public void execSvcTest(){
         ExecutorService execSvc = new DefaultExecutorService();
@@ -27,17 +26,5 @@ public class ExecutorServiceTest {
         logger.info("Job Returned: {}", jr.getReturnValue());
         assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
         //execSvc.getJobRegistryPopulators().forEach(pop -> pop.printRegistry());        
-    }
-
-    @Test
-    public void executeTest(){
-        ExecutorService execSvc = new DefaultExecutorService();
-        IJobFactory jobFactory = new JobFactory();
-        execSvc.setJobFactory(jobFactory);
-        jobFactory.registerJobExecutor("Sample", new JobExecutor());
-        //execSvc.load();
-        final JobReturn jr = execSvc.execute("Sample", "Arguments");
-        logger.info("Job Returned: {}", jr.getReturnValue());
-        assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
     }
 }

@@ -21,7 +21,7 @@ public class TestAsyncEFCloseable implements Closeable {
         ExecutorService execSvc = new ExecutorService();
         JobFactory jobFactory = new JobFactory();
         execSvc.setJobFactory(jobFactory);
-        execSvc.load();
+        //execSvc.load();
         asyncSvc = new AsyncExecutorFacade();
         asyncSvc.setService(execSvc);
     }

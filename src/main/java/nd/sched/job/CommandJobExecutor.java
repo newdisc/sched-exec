@@ -66,11 +66,13 @@ public class CommandJobExecutor implements IJobExecutor {
             return -1;
         }
     }
-    public void setName(String name) {
+    public CommandJobExecutor setName(String name) {
         this.name = name;
+        return this;
     }
-    public void setFullCommand(final String cmd) {
+    public CommandJobExecutor setFullCommand(final String cmd) {
         fullCommand = cmd;
+        return this;
     }
     public String getFullCommand(){
         return fullCommand;

@@ -1,9 +1,11 @@
 package nd.sched.job.factory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +42,8 @@ public class JobFactory implements IJobFactory {
     public Map<String, IJobExecutor> getRegistry(){
         return registry;
     }
-    public List<String> getJobLogs(final String job) {
+	@Override
+    public List<String> getLogs(final String job) {
         final String jobpat = ".*" + job + ".*.log";
         try (final Stream<Path> logfiles = Files.walk(Paths.get("./logs"));){
             return logfiles.filter(Files::isRegularFile)
@@ -52,4 +55,17 @@ public class JobFactory implements IJobFactory {
             throw new UtilException(msg, e);
         }
     }
+	@Override
+	public Collection<IJobExecutor> list() {
+		return registry.values();
+	}
+	@Override
+	public IJobExecutor get(final String name) {
+		return registry.get(name);
+	}
+	@Override
+	public InputStream getLog(final String logName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

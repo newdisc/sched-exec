@@ -33,7 +33,7 @@ public class JavaJobExecutor implements IJobExecutor {
         return jr;
     }
 
-	public void setMainClass(String mainClass) {
+	public JavaJobExecutor setMainClass(String mainClass) {
 		this.mainClass = mainClass;
 		try {
 	    	final Class myClass = Class.forName(mainClass);
@@ -42,13 +42,15 @@ public class JavaJobExecutor implements IJobExecutor {
             final String msg = "ERROR finding: " + mainClass + ".main";
             logger.error(msg, e);
 		}
+		return this;
 	}
     @Override
     public String getName() {
         return name;
     }
-    public void setName(String name) {
+    public JavaJobExecutor setName(String name) {
         this.name = name;
+        return this;
     }
 	public String getMainClass() {
 		return mainClass;

@@ -1,65 +1,69 @@
 package nd.sched.job.factory;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Properties;
 
-import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import com.opencsv.CSVReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.CommandJobExecutor;
 import nd.sched.job.JavaJobExecutor;
-import nd.sched.job.JobExecutor;
 
 public class JobRegistryPopulator implements IJobRegistryPopulator{
     private static final Logger logger = LoggerFactory.getLogger(JobRegistryPopulator.class);
-    private static final String JOB_FILE = "/jobs.csv";
-    private static final String JAVA_JOB_FILE = "/java.jobs.csv";
-    private final IJobFactory jobFactory;
-    private final String base;
-    public JobRegistryPopulator(IJobFactory jf, final String baseDir){
+    private static final String EXECUTORS_FILE = "nd.sched.job.executors";
+    private Properties configuration;
+    private IJobFactory jobFactory;
+
+	@Override
+	public IJobRegistryPopulator setFactory(IJobFactory jf) {
         jobFactory = jf;
-        base = baseDir;
-    }
-    @Override
+		return this;
+	}
+
+	@Override
+    public IJobRegistryPopulator setConfiguration(Properties configuration) {
+		this.configuration = configuration;
+		return this;
+	}
+
+	@Override
     public void registerJobs() {
-        final JobExecutor je = new JobExecutor();
-        je.setName("Sample");
-        jobFactory.registerJobExecutor("Sample", je);
-        logger.info("Registered Sample job");
-        List<CommandJobExecutor> jobs = JobRegistryPopulator.createBeans(base + JOB_FILE, CommandJobExecutor.class);
-        List<JavaJobExecutor> javaJobs = JobRegistryPopulator.createBeans(base + JAVA_JOB_FILE, JavaJobExecutor.class);
-        jobs.forEach(exec -> {
-        	jobFactory.registerJobExecutor(exec.getName(), exec);
-        	logger.info("Registered job: {}", exec.getName());
-        });
-        javaJobs.forEach(jj -> {
-        	jobFactory.registerJobExecutor(jj.getName(), jj);
-            logger.info("Registered Java job: {}", jj.getName());
-        });
-    }
-    public static <T> List<T> createBeans(final String filename, Class<T> typeClass) {
-        HeaderColumnNameMappingStrategy<T> hcnms = new HeaderColumnNameMappingStrategy<>();
-        hcnms.setType(typeClass);
-        try (final Reader reader = new FileReader(filename); ) {
-            return new CsvToBeanBuilder<T>(reader)
-                .withMappingStrategy(hcnms)
-                .build()
-                .parse();
-        } catch (IOException e) {
-            final String msg = "Issue reading Job File";
+    	final String filename = configuration.getProperty(EXECUTORS_FILE, "jobExecutors.csv");
+    	final File fileh = new File(filename);
+    	if (!fileh.canRead()) {
+    		logger.error("Missing executors list file: {}", filename);
+    		return;
+    	}
+    	try (final CSVReader reader = new CSVReader(new FileReader(filename))){
+    		reader.skip(1);//header
+    		reader.forEach(line -> {
+    			registerExecutor(line[0], line[1], Arrays.copyOfRange(line, 2, line.length));
+    		});
+    	} catch (IOException e) {
+            final String msg = "Issue reading Job Executors File: " + filename;
             logger.error(msg, e);
-        }
-        return new ArrayList<>();
+    	}
     }
-    @Override
-    public void printRegistry(){
-        logger.info("Registered Jobs: ");
-        jobFactory.printJobsRegistered();
-    }
+	@Override
+	public IJobRegistryPopulator registerExecutor(final String type, final String name, final String[] arguments) {
+		switch (type) {
+		case "CommandJob":
+			jobFactory.registerJobExecutor(name, 
+					(new CommandJobExecutor()).setName(name).setFullCommand(arguments[0]));
+			break;
+		case "JavaJob":
+			jobFactory.registerJobExecutor(name, 
+					(new JavaJobExecutor()).setName(name).setMainClass(arguments[0]));
+			break;
+		default:
+			throw new RuntimeException("Unknown Type: " + type);
+		}
+		return this;
+	}
 }
