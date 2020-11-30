@@ -36,7 +36,7 @@ public class AsyncExecutorFacade implements Closeable {
             jobName = jn;
             arguments = arg;
         }
-        @SuppressWarnings("squid:S2696")
+
         @Override
         public JobReturn get() {
             final Thread current = Thread.currentThread();

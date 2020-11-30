@@ -47,7 +47,7 @@ public class CommandJobExecutor implements IJobExecutor {
         }
         return jr;
     }
-    @SuppressWarnings("squid:S2142")
+
     public static int execute(final ProcessBuilder pb) {
         try {
         	pb.redirectErrorStream(true);

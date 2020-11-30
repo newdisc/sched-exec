@@ -10,11 +10,11 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
-import nd.sched.job.service.IExecutorService;
+import nd.sched.job.service.ILogJobExecutorService;
 
 public class JobExecutorVertx extends AbstractVerticle {
 	private static final Logger logger = LoggerFactory.getLogger(JobExecutorVertx.class);
-	private IExecutorService executorService;
+	private ILogJobExecutorService executorService;
 	private IJobFactory jobFactory;
 	private IJobRegistryPopulator populator;
 	
@@ -49,7 +49,7 @@ public class JobExecutorVertx extends AbstractVerticle {
 		rc.response()
 	      .putHeader("content-type", 
 	         "application/json; charset=utf-8")
-	      .end(Json.encodePrettily(executorService.execute(job, arguments)));
+	      .end(Json.encodePrettily(executorService.logAndExecute("Web" + job, job, arguments)));
 	}
 	public void details(final RoutingContext rc){
 		final String name = rc.request().getParam("jobName");
@@ -83,7 +83,7 @@ public class JobExecutorVertx extends AbstractVerticle {
 	      .end("{\"return\": \"SUCCESS\"}");
 	}
 
-	public void setExecutorService(IExecutorService executorService) {
+	public void setExecutorService(ILogJobExecutorService executorService) {
 		this.executorService = executorService;
 	}
 	public void setJobFactory(IJobFactory jobFactory) {

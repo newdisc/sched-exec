@@ -18,7 +18,7 @@ public class TestAsyncEFCloseable implements Closeable {
             .normalize()
             .toString();
         logger.info("CWD: {}", cwd);
-        ExecutorService execSvc = new ExecutorService();
+        JobExecutorService execSvc = new JobExecutorService();
         JobFactory jobFactory = new JobFactory();
         execSvc.setJobFactory(jobFactory);
         //execSvc.load();

@@ -8,15 +8,15 @@ import nd.sched.job.IJobExecutor.JobReturn;
 import nd.sched.job.IJobExecutor.JobStatus;
 import nd.sched.job.factory.IJobFactory;
 
-public class ExecutorService implements IExecutorService {
-    private static final Logger logger = LoggerFactory.getLogger(ExecutorService.class);
+public class JobExecutorService implements IExecutorService {
+    private static final Logger logger = LoggerFactory.getLogger(JobExecutorService.class);
     private IJobFactory jobFactory;
 
     @Override
     public IJobFactory getJobFactory() {
         return jobFactory;
     }
-    public ExecutorService setJobFactory(IJobFactory jobFactory) {
+    public JobExecutorService setJobFactory(IJobFactory jobFactory) {
         this.jobFactory = jobFactory;
         return this;
     }

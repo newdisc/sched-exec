@@ -17,7 +17,7 @@ public class ExecutorServiceTest {
 
     @Test
     public void execSvcTest(){
-        ExecutorService execSvc = new DefaultExecutorService();
+        JobExecutorService execSvc = new DefaultExecutorService();
         IJobFactory jobFactory = new JobFactory();
         execSvc.setJobFactory(jobFactory);
         jobFactory.registerJobExecutor("Sample", new JobExecutor());
@@ -31,7 +31,7 @@ public class ExecutorServiceTest {
 
     @Test
     public void executeTest(){
-        ExecutorService execSvc = new DefaultExecutorService();
+        JobExecutorService execSvc = new DefaultExecutorService();
         IJobFactory jobFactory = new JobFactory();
         execSvc.setJobFactory(jobFactory);
         jobFactory.registerJobExecutor("Sample", new JobExecutor());

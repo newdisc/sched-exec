@@ -16,7 +16,7 @@ public class DefaultExecutorServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultExecutorServiceTest.class);
     @Test
     public void execSvcTest(){
-        ExecutorService execSvc = new DefaultExecutorService();
+        JobExecutorService execSvc = new DefaultExecutorService();
         IJobFactory jobFactory = new JobFactory();
         execSvc.setJobFactory(jobFactory);
         jobFactory.registerJobExecutor("Sample", new JobExecutor());

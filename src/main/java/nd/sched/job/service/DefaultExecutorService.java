@@ -10,7 +10,7 @@ import nd.sched.job.factory.IJobRegistryPopulator;
 import nd.sched.job.factory.JobFactory;
 import nd.sched.job.factory.JobRegistryPopulator;
 
-public class DefaultExecutorService extends ExecutorService {
+public class DefaultExecutorService extends JobExecutorService {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultExecutorService.class);
 	public DefaultExecutorService() {
 		// Create the pieces needed and link together - can use spring instead

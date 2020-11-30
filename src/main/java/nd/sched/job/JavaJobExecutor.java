@@ -36,7 +36,7 @@ public class JavaJobExecutor implements IJobExecutor {
 	public JavaJobExecutor setMainClass(String mainClass) {
 		this.mainClass = mainClass;
 		try {
-	    	final Class myClass = Class.forName(mainClass);
+	    	final Class<? extends Object> myClass = Class.forName(mainClass);
 	    	mainMethod = myClass.getMethod("main", String[].class);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
             final String msg = "ERROR finding: " + mainClass + ".main";
