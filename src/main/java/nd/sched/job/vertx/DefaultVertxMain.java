@@ -16,6 +16,9 @@ import nd.sched.job.factory.JobRegistryPopulator;
 import nd.sched.job.service.AsyncLogExecutorService;
 
 public class DefaultVertxMain {
+	static {
+		System.setProperty("logback.configurationFile", "./logback.xml");
+	}
 	private static final Logger logger = LoggerFactory.getLogger(DefaultVertxMain.class);
 	public static void main(String[] args) throws Exception{
 		// Create the pieces needed and link together - can use spring instead

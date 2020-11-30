@@ -33,11 +33,11 @@ public class AsyncLogExecutorService extends JobExecutorService implements ILogJ
         final String origName = current.getName();
         current.setName(triggerName + current.getId());
         MDC.put(LOGFILENAME,name);
-        logger.debug("Starting Job: {} with arguments: {}, origName: {}", name, arguments, origName);
+        logger.info("Starting Job: {} with arguments: {}, origName: {}", name, arguments, origName);
         logger.info("=======================================================");
         final JobReturn jr = execute(jobName, arguments);
         logger.info("=======================================================");
-        logger.debug("Completed Job: {} with arguments: {} with return : {}", name, arguments, jr);
+        logger.info("Completed Job: {} with arguments: {} with return : {}", name, arguments, jr);
         MDC.remove(LOGFILENAME);
         current.setName(origName);
         return jr;

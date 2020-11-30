@@ -38,7 +38,7 @@ public class CommandJobExecutor implements IJobExecutor {
         execCommand = execCommand + " " + argumentString;
         cmdList.add(execCommand);
         final ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
-        logger.info("Executing: {}", processBuilder.command());
+        logger.info("#Executing: {}", processBuilder.command());
         final JobReturn jr = new JobReturn();
         final int ret = execute(processBuilder);
         jr.setJobStatus(JobStatus.FAILURE);
@@ -58,7 +58,7 @@ public class CommandJobExecutor implements IJobExecutor {
                 logger.info(line);
             }
             int exitCode = process.waitFor();
-            logger.info("Exit Code: {}", exitCode);
+            logger.info("#Exit Code: {}", exitCode);
             return exitCode;
         } catch (IOException | InterruptedException e) {
             final String msg = "ERROR executing: " + pb.command().toString();
