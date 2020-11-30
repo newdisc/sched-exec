@@ -8,6 +8,7 @@ import io.vertx.core.Future;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.StaticHandler;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
 import nd.sched.job.service.ILogJobExecutorService;
@@ -17,17 +18,16 @@ public class JobExecutorVertx extends AbstractVerticle {
 	private ILogJobExecutorService executorService;
 	private IJobFactory jobFactory;
 	private IJobRegistryPopulator populator;
+	private Router router;
 	
 	@Override
 	public void start(Future<Void> fut) {
-		final Router router = Router.router(getVertx());
-		router.route("/api/job/list").handler(this::list);
-		router.route("/api/job/details").handler(this::details);
-		router.route("/api/job/execute").handler(this::execute);
-		router.route("/api/job/load").handler(this::load);
-		router.route("/api/job/shutdown").handler(rc -> {vertx.close();});
-		router.route("/api/job/logs").handler(this::logs);
-		
+		router = Router.router(getVertx());
+		registerRoutes();
+		createHttpServer(fut);
+	}
+
+	public void createHttpServer(Future<Void> fut) {
 		vertx.createHttpServer().requestHandler(router::accept).listen(
 // Retrieve the port from the configuration,
 // default to 8080.
@@ -40,6 +40,16 @@ public class JobExecutorVertx extends AbstractVerticle {
 				}
 			}
 		);
+	}
+
+	public void registerRoutes() {
+		router.route("/api/job/list").handler(this::list);
+		router.route("/api/job/details").handler(this::details);
+		router.route("/api/job/execute").handler(this::execute);
+		router.route("/api/job/load").handler(this::load);
+		router.route("/api/job/shutdown").handler(rc -> {vertx.close();});
+		router.route("/api/job/logs").handler(this::logs);
+		router.route("/api/log/*").handler(StaticHandler.create("./logs"));
 	}
 	
 	public void execute(final RoutingContext rc) {

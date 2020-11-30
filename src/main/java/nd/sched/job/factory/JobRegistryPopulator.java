@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.CommandJobExecutor;
+import nd.sched.job.FileCompareJobExecutor;
 import nd.sched.job.JavaJobExecutor;
 
 public class JobRegistryPopulator implements IJobRegistryPopulator{
@@ -60,6 +61,10 @@ public class JobRegistryPopulator implements IJobRegistryPopulator{
 		case "JavaJob":
 			jobFactory.registerJobExecutor(name, 
 					(new JavaJobExecutor()).setName(name).setMainClass(arguments[0]));
+			break;
+		case "CompareJob":
+			jobFactory.registerJobExecutor(name, 
+					(new FileCompareJobExecutor()).setName(name).setTemplate(arguments[0]));
 			break;
 		default:
 			throw new RuntimeException("Unknown Type: " + type);

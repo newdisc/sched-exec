@@ -1,0 +1,3 @@
+#Executing: [bash, -c, echo %USERNAME% HelloHello1]
+%USERNAME% HelloHello1
+#Exit Code: 0
