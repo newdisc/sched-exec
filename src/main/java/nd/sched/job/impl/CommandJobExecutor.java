@@ -1,4 +1,4 @@
-package nd.sched.job;
+package nd.sched.job.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,15 +6,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommandJobExecutor implements IJobExecutor {
+import nd.sched.job.BaseJobExecutor;
+import nd.sched.job.JobReturn;
+
+public class CommandJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
         "nd.sched.job.service.run." + CommandJobExecutor.class.getSimpleName());
 
-    private String name;
     private final List<String> osCommand;
     private String fullCommand;
 
@@ -24,11 +27,8 @@ public class CommandJobExecutor implements IJobExecutor {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-    @Override
-    public JobReturn execute(String argumentString) {
+    public void executeAsync(String argumentString, UnaryOperator<JobReturn> callBack) {
+    	super.executeAsync(argumentString, callBack);
         final List<String> cmdList = new ArrayList<>();
         cmdList.addAll(osCommand);
         String execCommand = "";
@@ -45,16 +45,17 @@ public class CommandJobExecutor implements IJobExecutor {
         if (0 == ret) {
             jr.setJobStatus(JobStatus.SUCCESS);
         }
-        return jr;
+        callBack.apply(jr);
     }
 
-    public static int execute(final ProcessBuilder pb) {
+    public int execute(final ProcessBuilder pb) {
         try {
         	pb.redirectErrorStream(true);
             final Process process = pb.start();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while (null != (line = reader.readLine())) {
+            	writeSafe(line.getBytes());
                 logger.info(line);
             }
             int exitCode = process.waitFor();
@@ -62,13 +63,10 @@ public class CommandJobExecutor implements IJobExecutor {
             return exitCode;
         } catch (IOException | InterruptedException e) {
             final String msg = "ERROR executing: " + pb.command().toString();
+            writeSafe(msg.getBytes());
             logger.error(msg, e);
             return -1;
         }
-    }
-    public CommandJobExecutor setName(String name) {
-        this.name = name;
-        return this;
     }
     public CommandJobExecutor setFullCommand(final String cmd) {
         fullCommand = cmd;

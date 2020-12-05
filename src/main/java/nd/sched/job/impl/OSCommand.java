@@ -1,4 +1,4 @@
-package nd.sched.job;
+package nd.sched.job.impl;
 
 public class OSCommand {
     private static String osName = System.getProperty("os.name").toLowerCase();

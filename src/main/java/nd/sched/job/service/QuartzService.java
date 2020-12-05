@@ -6,7 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
@@ -24,9 +24,9 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nd.sched.job.TimerJobExecutor;
-import nd.sched.job.IJobExecutor.JobReturn;
 import nd.sched.job.IJobExecutor.JobStatus;
+import nd.sched.job.impl.TimerJobExecutor;
+import nd.sched.job.JobReturn;
 
 public class QuartzService implements Closeable {
 	private static final Logger logger = LoggerFactory.getLogger(QuartzService.class);
@@ -56,13 +56,15 @@ public class QuartzService implements Closeable {
 			final Date nft = context.getNextFireTime();
 
 			final JobReturn jr = new JobReturn();
-			jr.setReturnValue("Next Firetime: " + DFORMAT.format(nft));
+			final String nftstr = "Next Firetime: " + DFORMAT.format(nft);
+			jr.setReturnValue(nftstr);
 			jr.setJobStatus(JobStatus.SUCCESS);
 			
 			final JobDataMap jobDataMap = context.getMergedJobDataMap(); 
 	        final TimerJobExecutor tje = (TimerJobExecutor)jobDataMap.get("timerJobExecutor");
-	        final Function<JobReturn, JobReturn> callback = tje.getCallback();
+	        final UnaryOperator<JobReturn> callback = tje.getCallback();
 	        JobReturn res = callback.apply(jr);
+	        tje.writeSafe(nftstr.getBytes());
 	        logger.info("Callback to SUCCESS returned: {}", res);
 
 	        jr.setJobStatus(JobStatus.RUNNING);
@@ -92,6 +94,8 @@ public class QuartzService implements Closeable {
 
         try {
             Date dt = scheduler.scheduleJob(jd, trg);
+			final String nftstr = "Next Firetime: " + DFORMAT.format(dt);
+			tje.writeSafe(nftstr.getBytes());
             logger.info("Scheduled job: {} with schedule: {} and date: {}", 
                 name, condition, dt);
         } catch (SchedulerException e) {

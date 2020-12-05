@@ -1,4 +1,4 @@
-package nd.sched.job;
+package nd.sched.job.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nd.sched.job.IJobExecutor.JobReturn;
 import nd.sched.job.IJobExecutor.JobStatus;
+import nd.sched.job.JobReturn;
 
 public class JavaJobExecutorTest {
     private static final Logger logger = LoggerFactory.getLogger(JavaJobExecutorTest.class);
@@ -24,9 +24,12 @@ public class JavaJobExecutorTest {
 
     @Test
     public void execTest(){
-        JobReturn jr = command.execute("a b c");
-        logger.info("Job result: {}", jr.getReturnValue());
-        assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
+        command.executeAsync("a b c", j -> {
+            JobReturn jr = j; 
+            logger.info("Job Return: {}", jr.getReturnValue());
+            assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
+        	return j;
+        });
     }
 
     public static void main(final String[] args) {

@@ -1,5 +1,6 @@
 package nd.sched.job.factory;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -7,18 +8,18 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.IJobExecutor;
-import nd.sched.job.JobExecutor;
-import nd.sched.job.IJobExecutor.JobReturn;
+import nd.sched.job.JobReturn;
 import nd.sched.job.IJobExecutor.JobStatus;
 
-public class JobFactoryTest {
+class JobFactoryTest {
     private static final Logger logger = LoggerFactory.getLogger(JobFactoryTest.class);
     private JobFactory jobFactory = new JobFactory();
 
     @BeforeEach
     public void init(){
-        final JobExecutor je = new JobExecutor();
+        final BaseJobExecutor je = new BaseJobExecutor();
         je.setName("Sample");
         jobFactory.registerJobExecutor("Sample", je);
     }
@@ -26,9 +27,12 @@ public class JobFactoryTest {
     @Test
     public void executeTest(){
         final IJobExecutor je = jobFactory.getJobExecutor("Sample");
-        final JobReturn jr = je.execute("Arguments1");
-        logger.info("Job Return: {}", jr.getReturnValue());
-        assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
+        je.executeAsync("Arguments1", j -> {
+            JobReturn jr = j; 
+            logger.info("Job Return: {}", jr.getReturnValue());
+            assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
+        	return j;
+        });
     }
 
 }

@@ -1,21 +1,25 @@
-package nd.sched.job;
+package nd.sched.job.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.function.UnaryOperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JavaJobExecutor implements IJobExecutor {
+import nd.sched.job.BaseJobExecutor;
+import nd.sched.job.JobReturn;
+
+public class JavaJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
         "nd.sched.job.service.run." + JavaJobExecutor.class.getSimpleName());
 
-    private String name;
     private String mainClass;
     private Method mainMethod;
     @Override
-    public JobReturn execute(String argumentString) {
+    public void executeAsync(String argumentString, UnaryOperator<JobReturn> callBack) {
+    	super.executeAsync(argumentString, callBack);
         final JobReturn jr = new JobReturn();
         jr.setJobStatus(JobStatus.FAILURE);
         String[] arguments = argumentString.split(",", -1);
@@ -30,7 +34,7 @@ public class JavaJobExecutor implements IJobExecutor {
             final String msg = "ERROR executing: " + mainClass + ".main " + argsString;
             logger.error(msg, e);
 		}
-        return jr;
+        callBack.apply(jr);
     }
 
 	public JavaJobExecutor setMainClass(String mainClass) {
@@ -44,14 +48,6 @@ public class JavaJobExecutor implements IJobExecutor {
 		}
 		return this;
 	}
-    @Override
-    public String getName() {
-        return name;
-    }
-    public JavaJobExecutor setName(String name) {
-        this.name = name;
-        return this;
-    }
 	public String getMainClass() {
 		return mainClass;
 	}

@@ -9,15 +9,16 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
+import nd.sched.job.JobReturn;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
-import nd.sched.job.service.ILogJobExecutorService;
+import nd.sched.job.service.IJobExecutorService;
 
 public class JobExecutorVertx extends AbstractVerticle {
 	private static final Logger logger = LoggerFactory.getLogger(JobExecutorVertx.class);
 	private static final String CONTENT_TYPE = "content-type";
 	private static final String JSON_UTF8 = "application/json; charset=utf-8";
-	private ILogJobExecutorService executorService;
+	private IJobExecutorService executorService;
 	private IJobFactory jobFactory;
 	private IJobRegistryPopulator populator;
 	private Router router;
@@ -58,9 +59,10 @@ public class JobExecutorVertx extends AbstractVerticle {
 		final String job = rc.request().getParam("jobName");
 		final String arguments = rc.request().getParam("args");
 		logger.info("Executing: {}, {}", job, arguments);
+		final JobReturn jr = executorService.execute("Web" + job, job, arguments);
 		rc.response()
 	      .putHeader(CONTENT_TYPE, JSON_UTF8)
-	      .end(Json.encodePrettily(executorService.logAndExecute("Web" + job, job, arguments)));
+	      .end(Json.encodePrettily(jr));
 	}
 	public void details(final RoutingContext rc){
 		final String name = rc.request().getParam("jobName");
@@ -90,7 +92,7 @@ public class JobExecutorVertx extends AbstractVerticle {
 	      .end("{\"return\": \"SUCCESS\"}");
 	}
 
-	public void setExecutorService(ILogJobExecutorService executorService) {
+	public void setExecutorService(IJobExecutorService executorService) {
 		this.executorService = executorService;
 	}
 	public void setJobFactory(IJobFactory jobFactory) {

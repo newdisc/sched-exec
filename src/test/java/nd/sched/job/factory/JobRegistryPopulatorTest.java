@@ -10,7 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.IJobExecutor;
-import nd.sched.job.IJobExecutor.JobReturn;
+import nd.sched.job.IJobExecutor.JobStatus;
+import nd.sched.job.JobReturn;
 
 public class JobRegistryPopulatorTest {
     private static final Logger logger = LoggerFactory.getLogger(JobRegistryPopulatorTest.class);
@@ -23,9 +24,11 @@ public class JobRegistryPopulatorTest {
         logger.info("CWD: {}", pwd);
         jobRegistryPopulator.registerJobs();
         final IJobExecutor je = jobFactory.getJobExecutor("EchoJob");
-        final JobReturn jr = je.execute("Arguments JobRegistryPopulatorTest");
-        logger.info("Job Returned: {}", jr.getReturnValue());
-        assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
-        //jobRegistryPopulator.printRegistry();
+        je.executeAsync("Arguments JobRegistryPopulatorTest", j -> {
+            JobReturn jr = j; 
+            logger.info("Job Return: {}", jr.getReturnValue());
+            assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
+        	return j;
+        });
     }
 }

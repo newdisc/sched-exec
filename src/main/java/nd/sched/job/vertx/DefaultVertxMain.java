@@ -13,7 +13,7 @@ import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
 import nd.sched.job.factory.JobFactory;
 import nd.sched.job.factory.JobRegistryPopulator;
-import nd.sched.job.service.AsyncLogExecutorService;
+import nd.sched.job.service.JobExecutorService;
 
 public class DefaultVertxMain {
 	static {
@@ -24,7 +24,7 @@ public class DefaultVertxMain {
 		// Create the pieces needed and link together - can use spring instead
 		logger.info("Creating default Vertx");
 		final IJobFactory jf = new JobFactory();
-		final AsyncLogExecutorService je = new AsyncLogExecutorService();
+		final JobExecutorService je = new JobExecutorService();
 		je.setJobFactory(jf);
 		final IJobRegistryPopulator jrp = new JobRegistryPopulator().setFactory(jf);
 		final Properties props = new Properties();

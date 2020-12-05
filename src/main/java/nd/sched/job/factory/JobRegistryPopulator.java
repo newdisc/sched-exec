@@ -11,9 +11,10 @@ import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nd.sched.job.CommandJobExecutor;
-import nd.sched.job.FileCompareJobExecutor;
-import nd.sched.job.JavaJobExecutor;
+import nd.sched.job.impl.CommandJobExecutor;
+import nd.sched.job.impl.FileCompareJobExecutor;
+import nd.sched.job.impl.JavaJobExecutor;
+import nd.sched.job.impl.TimerJobExecutor;
 
 public class JobRegistryPopulator implements IJobRegistryPopulator{
     private static final Logger logger = LoggerFactory.getLogger(JobRegistryPopulator.class);
@@ -56,15 +57,19 @@ public class JobRegistryPopulator implements IJobRegistryPopulator{
 		switch (type) {
 		case "CommandJob":
 			jobFactory.registerJobExecutor(name, 
-					(new CommandJobExecutor()).setName(name).setFullCommand(arguments[0]));
+					(new CommandJobExecutor()).setFullCommand(arguments[0]).setName(name));
 			break;
 		case "JavaJob":
 			jobFactory.registerJobExecutor(name, 
-					(new JavaJobExecutor()).setName(name).setMainClass(arguments[0]));
+					(new JavaJobExecutor()).setMainClass(arguments[0]).setName(name));
 			break;
 		case "CompareJob":
 			jobFactory.registerJobExecutor(name, 
-					(new FileCompareJobExecutor()).setName(name).setTemplate(arguments[0]));
+					(new FileCompareJobExecutor()).setTemplate(arguments[0]).setName(name));
+			break;
+		case "CronJob":
+			jobFactory.registerJobExecutor(name, 
+					(new TimerJobExecutor()).setCronCondition(arguments[0]).setName(name));
 			break;
 		default:
 			throw new RuntimeException("Unknown Type: " + type);

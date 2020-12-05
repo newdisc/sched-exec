@@ -1,7 +1,8 @@
-package nd.sched.job;
+package nd.sched.job.impl;
 
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Diff;
@@ -11,24 +12,25 @@ import org.slf4j.LoggerFactory;
 
 import nd.data.stream.DataStream;
 import nd.data.stream.StringToInputStream;
+import nd.sched.job.BaseJobExecutor;
+import nd.sched.job.JobReturn;
 
-public class FileCompareJobExecutor implements IJobExecutor {
+public class FileCompareJobExecutor extends BaseJobExecutor {
 	private static final Logger logger = LoggerFactory.getLogger("nd.sched.job.service.run." + 
 			FileCompareJobExecutor.class.getSimpleName());
 	private String templateText;
-	private String name;
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public JobReturn execute(String argumentString) {
+    public void executeAsync(String argumentString, UnaryOperator<JobReturn> callBack) {
+    	super.executeAsync(argumentString, callBack);
 		final DiffMatchPatch dmp = new DiffMatchPatch();
 		final String actualOut = fileToString(argumentString);
 		final LinkedList<Diff> diff = dmp.diffMain(templateText, actualOut);
-		diff.stream().forEach(dif -> logger.info(dif.toString()));
+		diff.stream().forEach(dif -> {
+			final String diffr = dif.toString();
+			logger.info(diffr);
+        	writeSafe(diffr.getBytes());
+		});
 		
 		final JobReturn jr = new JobReturn();
 		final Optional<Operation> op = diff.stream().map(dif -> dif.operation)
@@ -38,7 +40,7 @@ public class FileCompareJobExecutor implements IJobExecutor {
 		} else {
 			jr.setJobStatus(JobStatus.SUCCESS);
 		}
-		return jr;
+        callBack.apply(jr);
 	}
 
 	public FileCompareJobExecutor setTemplate(String template) {
@@ -56,9 +58,5 @@ public class FileCompareJobExecutor implements IJobExecutor {
 			logger.error("Could not initialize template string: {}", fileRes, e);
 		}
 		return "";
-	}
-	public FileCompareJobExecutor setName(String name) {
-		this.name = name;
-		return this;
 	}
 }
