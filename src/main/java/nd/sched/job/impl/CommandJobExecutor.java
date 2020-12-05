@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.JobReturn;
+import nd.sched.job.JobReturn.JobStatus;
 
 public class CommandJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
@@ -51,8 +52,9 @@ public class CommandJobExecutor extends BaseJobExecutor {
     public int execute(final ProcessBuilder pb) {
         try {
         	pb.redirectErrorStream(true);
+        	//pb.redirectOutput();
             final Process process = pb.start();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while (null != (line = reader.readLine())) {
             	writeSafe(line.getBytes());

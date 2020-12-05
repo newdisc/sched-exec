@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.IJobExecutor;
-import nd.sched.job.IJobExecutor.JobStatus;
 import nd.sched.job.JobReturn;
+import nd.sched.job.JobReturn.JobStatus;
 
 public class JobRegistryPopulatorTest {
     private static final Logger logger = LoggerFactory.getLogger(JobRegistryPopulatorTest.class);

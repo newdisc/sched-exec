@@ -4,6 +4,7 @@ import java.util.function.UnaryOperator;
 
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.JobReturn;
+import nd.sched.job.JobReturn.JobStatus;
 
 public class TimerJobExecutor extends BaseJobExecutor {
 	private String cronCondition;

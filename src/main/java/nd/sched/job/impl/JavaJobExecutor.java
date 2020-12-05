@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.JobReturn;
+import nd.sched.job.JobReturn.JobStatus;
 
 public class JavaJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(

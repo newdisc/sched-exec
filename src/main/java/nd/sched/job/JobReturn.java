@@ -1,8 +1,7 @@
 package nd.sched.job;
 
-import nd.sched.job.IJobExecutor.JobStatus;
-
 public class JobReturn {
+    public enum JobStatus {CREATED, RUNNING, SUCCESS, FAILURE}
     private String returnValue;
     private JobStatus jobStatus;
     @Override

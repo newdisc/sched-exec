@@ -18,29 +18,39 @@ import nd.sched.job.service.JobExecutorService;
 public class DefaultVertxMain {
 	static {
 		System.setProperty("logback.configurationFile", "./logback.xml");
+		System.setProperty("vertx.options.maxEventLoopExecuteTime", "10000000000");
 	}
 	private static final Logger logger = LoggerFactory.getLogger(DefaultVertxMain.class);
 	public static void main(String[] args) throws Exception{
 		// Create the pieces needed and link together - can use spring instead
 		logger.info("Creating default Vertx");
-		final IJobFactory jf = new JobFactory();
-		final JobExecutorService je = new JobExecutorService();
-		je.setJobFactory(jf);
-		final IJobRegistryPopulator jrp = new JobRegistryPopulator().setFactory(jf);
-		final Properties props = new Properties();
-		jrp.setConfiguration(props);
-		jrp.registerJobs();
-		
-		final JobExecutorVertx jev = new JobExecutorVertx();
-		jev.setExecutorService(je);
-		jev.setJobFactory(jf);
-		jev.setPopulator(jrp);
+		final JobExecutorController jec = initJobController();
+		final VertxVentricleHttp jev = new VertxVentricleHttp();
+		jev.addHandler("/api/job/", jec);
 
+		runVertx(jev);
+	}
+	public static void runVertx(final VertxVentricleHttp jev) throws InterruptedException {
 		final BlockingQueue<AsyncResult<String>> q = new ArrayBlockingQueue<>(1);
 		Vertx.vertx().deployVerticle(jev, q::offer);
 		final AsyncResult<String> result = q.take();
 		if (result.failed()) {
 		    throw new RuntimeException(result.cause());
 		}
+	}
+	public static JobExecutorController initJobController() {
+		final Properties props = new Properties();
+		final IJobFactory jf = new JobFactory();
+		final JobExecutorService je = new JobExecutorService();
+		je.setConfig(props);
+		je.setJobFactory(jf);
+		final IJobRegistryPopulator jrp = new JobRegistryPopulator().setFactory(jf);
+		jrp.setConfiguration(props);
+		jrp.registerJobs();
+		final JobExecutorController jec = new JobExecutorController();
+		jec.setExecutorService(je);
+		jec.setJobFactory(jf);
+		jec.setPopulator(jrp);
+		return jec;
 	}
 }

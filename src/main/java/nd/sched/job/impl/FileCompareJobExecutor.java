@@ -14,6 +14,7 @@ import nd.data.stream.DataStream;
 import nd.data.stream.StringToInputStream;
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.JobReturn;
+import nd.sched.job.JobReturn.JobStatus;
 
 public class FileCompareJobExecutor extends BaseJobExecutor {
 	private static final Logger logger = LoggerFactory.getLogger("nd.sched.job.service.run." + 

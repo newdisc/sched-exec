@@ -69,7 +69,7 @@ public class JobRegistryPopulator implements IJobRegistryPopulator{
 			break;
 		case "CronJob":
 			jobFactory.registerJobExecutor(name, 
-					(new TimerJobExecutor()).setCronCondition(arguments[0]).setName(name));
+					(new TimerJobExecutor()).setCronCondition(arguments[0]).setTimeZone(arguments[1]).setName(name));
 			break;
 		default:
 			throw new RuntimeException("Unknown Type: " + type);

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.IJobExecutor;
 import nd.sched.job.JobReturn;
-import nd.sched.job.IJobExecutor.JobStatus;
+import nd.sched.job.JobReturn.JobStatus;
 
 class JobFactoryTest {
     private static final Logger logger = LoggerFactory.getLogger(JobFactoryTest.class);

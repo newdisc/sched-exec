@@ -1,5 +1,6 @@
 package nd.sched.job.service;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.IJobExecutor;
 import nd.sched.job.JobReturn;
-import nd.sched.job.IJobExecutor.JobStatus;
+import nd.sched.job.JobReturn.JobStatus;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
 import nd.sched.job.factory.JobFactory;
@@ -55,6 +56,6 @@ class ExecutorServiceTest {
         //execSvc.load();
         final JobReturn jr = execSvc.execute("Test", "Sample", "Arguments");
         logger.info("Job Returned: {}", jr.getReturnValue());
-        assertEquals(IJobExecutor.JobStatus.SUCCESS, jr.getJobStatus());
+        assertEquals(JobStatus.SUCCESS, jr.getJobStatus());
     }
 }

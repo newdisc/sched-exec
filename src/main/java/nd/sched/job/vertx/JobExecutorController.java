@@ -3,56 +3,26 @@ package nd.sched.job.vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.StaticHandler;
 import nd.sched.job.JobReturn;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.IJobRegistryPopulator;
 import nd.sched.job.service.IJobExecutorService;
 
-public class JobExecutorVertx extends AbstractVerticle {
-	private static final Logger logger = LoggerFactory.getLogger(JobExecutorVertx.class);
+public class JobExecutorController extends HandlerBase {
+	private static final Logger logger = LoggerFactory.getLogger(JobExecutorController.class);
 	private static final String CONTENT_TYPE = "content-type";
 	private static final String JSON_UTF8 = "application/json; charset=utf-8";
 	private IJobExecutorService executorService;
 	private IJobFactory jobFactory;
 	private IJobRegistryPopulator populator;
 	private Router router;
-	
-	@Override
-	public void start(Promise<Void> prm) {
-		router = Router.router(getVertx());
-		registerRoutes();
-		createHttpServer(prm);
-	}
-	
-	public void createHttpServer(Promise<Void> prm) {
-		vertx.createHttpServer().requestHandler(router).listen(
-				// Retrieve the port from the configuration,
-				// default to 8080.
-				config().getInteger("http.port", 8080),
-				result -> {
-					if (result.succeeded()) {
-						prm.complete();
-					} else {
-						prm.fail(result.cause());
-					}
-				}
-			);
-	}
 
-	public void registerRoutes() {
-		router.route("/api/job/list").handler(this::list);
-		router.route("/api/job/details").handler(this::details);
-		router.route("/api/job/execute").handler(this::execute);
-		router.route("/api/job/load").handler(this::load);
-		router.route("/api/job/shutdown").handler(rc -> vertx.close());
-		router.route("/api/job/logs").handler(this::logs);
-		router.route("/api/log/*").handler(StaticHandler.create("./logs"));
+	@Override
+	public void handle(RoutingContext event) {
+		router.handleContext(event);
 	}
 	
 	public void execute(final RoutingContext rc) {
@@ -100,5 +70,22 @@ public class JobExecutorVertx extends AbstractVerticle {
 	}
 	public void setPopulator(IJobRegistryPopulator jrp) {
 		populator = jrp;
+	}
+	public JobExecutorController setRouter(Router router) {
+		this.router = router;
+		router.get("/list").handler(this::list);
+		router.get("/details").handler(this::details);
+		router.get("/execute").handler(this::execute);
+		router.get("/load").handler(this::load);
+		router.get("/logs").handler(this::logs);
+		return this;
+	}
+
+	public IJobExecutorService getExecutorService() {
+		return executorService;
+	}
+
+	public Router getRouter() {
+		return router;
 	}
 }

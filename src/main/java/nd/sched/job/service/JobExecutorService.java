@@ -1,8 +1,9 @@
 package nd.sched.job.service;
 
 import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import nd.data.util.IConfigurable;
 import nd.sched.job.IJobExecutor;
 import nd.sched.job.JobReturn;
-import nd.sched.job.IJobExecutor.JobStatus;
+import nd.sched.job.JobReturn.JobStatus;
 import nd.sched.job.factory.IJobFactory;
 
 public class JobExecutorService implements IJobExecutorService {
@@ -29,27 +30,39 @@ public class JobExecutorService implements IJobExecutorService {
 	@Override
 	public void initiateExecute(String triggerName, String jobName, String arguments,
 			UnaryOperator<JobReturn> callBack) {
-		final String outname = properties.getProperty(CFG_OUT_DIR, "out/") + 
+		final String outname = properties.getProperty(CFG_OUT_DIR, "./logs/") + 
 				LocalDate.now().format(DATE_FMT) + "-" + triggerName + "-" + jobName + ".out";
         final IJobExecutor job = jobFactory.getJobExecutor(jobName);
-		BufferedOutputStream bos;
+		final BufferedOutputStream bos;
 		try {
+			final File file = new File(outname);
+			logger.info(file.getCanonicalPath());
 			bos = new BufferedOutputStream(new FileOutputStream(outname));
-		} catch (FileNotFoundException e) {
-			bos = null;
+		} catch (IOException e) {
+        	handleError("Output NOT found: {}, {}", jobName, callBack, outname);
+            return;
 		}
-        if (null == job || null == bos) {
-        	logger.error("Job/output NOT found: {}, {}", jobName, outname);
-            final JobReturn jr = new JobReturn();
-            jr.setJobStatus(JobStatus.FAILURE);
-            jr.setReturnValue("Job/output NOT found!");
-            callBack.apply(jr);
+        if (null == job) {
+        	handleError("Job NOT found: {}, {}", jobName, callBack, outname);
+            return;
         }
         job.setStream(bos);
         job.executeAsync(arguments, jr -> {
         	callBack.apply(jr);
+        	try {
+				bos.close();
+			} catch (IOException e) {
+				logger.error("Problem with executing job: ", e);
+			}
         	return jr;
         });
+	}
+	public void handleError(final String error, String jobName, UnaryOperator<JobReturn> callBack, final String outname) {
+		logger.error(error, jobName, outname);
+		final JobReturn jr = new JobReturn();
+		jr.setJobStatus(JobStatus.FAILURE);
+		jr.setReturnValue("Job/output NOT found!");
+		callBack.apply(jr);
 	}
 	@Override
 	public JobReturn execute(String triggerName, String jobName, String arguments) {
