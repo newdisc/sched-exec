@@ -1,7 +1,6 @@
 package nd.sched.job.factory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,7 +50,7 @@ public class JobFactory implements IJobFactory {
                 .filter(f -> f.matches(jobpat)).collect(Collectors.toList());
         } catch (IOException e) {
             final String msg = "Issue listing Job Log Files";
-            //logger.error(msg, e);
+            logger.error(msg, e);
             throw new UtilException(msg, e);
         }
     }
@@ -62,10 +61,5 @@ public class JobFactory implements IJobFactory {
 	@Override
 	public IJobExecutor get(final String name) {
 		return registry.get(name);
-	}
-	@Override
-	public InputStream getLog(final String logName) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

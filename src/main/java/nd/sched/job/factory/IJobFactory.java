@@ -1,6 +1,5 @@
 package nd.sched.job.factory;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,5 +12,4 @@ public interface IJobFactory {
     public Collection<IJobExecutor> list();
     public IJobExecutor get(final String name);
     public List<String> getLogs(final String pattern);
-    public InputStream getLog(final String logName); 
 }

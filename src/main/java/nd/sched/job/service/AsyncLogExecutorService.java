@@ -21,6 +21,7 @@ public class AsyncLogExecutorService extends JobExecutorService implements ILogJ
 	public CompletableFuture<JobReturn> initiateExecute(final String triggerName, final String jobName, 
 			final String arguments) {
     	logger.info("Initiating: {}-{}, {}", triggerName, jobName, arguments);
+    	//CompletableFuture<JobReturn> cfjr = new CompletableFuture<>();
     	return CompletableFuture.supplyAsync(() -> { return logAndExecute(triggerName, jobName,arguments);}, javaExecutor);
     }
 
