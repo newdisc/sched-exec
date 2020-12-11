@@ -11,6 +11,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
 public class VertxVentricleHttp extends AbstractVerticle {
@@ -45,7 +46,9 @@ public class VertxVentricleHttp extends AbstractVerticle {
 	}
 
 	public void registerRoutes() {
-		router.route("/api/log/*").handler(StaticHandler.create("./logs"));
+		router.route().handler(LoggerHandler.create());
+		final StaticHandler sh = StaticHandler.create("./logs").setDirectoryListing(true);
+		router.route("/api/logs/*").handler(sh);
 		router.route("/api/shutdown").handler(rc -> vertx.close());
 		handlers.entrySet().forEach(entry -> {
 			final HandlerBase handler = entry.getValue();

@@ -43,10 +43,14 @@ public class JobFactory implements IJobFactory {
     }
 	@Override
     public List<String> getLogs(final String job) {
-        final String jobpat = ".*" + job + ".*.log";
+        final String jobpat = ".*" + job + ".*.[log\\|out]";
         try (final Stream<Path> logfiles = Files.walk(Paths.get("./logs"));){
             return logfiles.filter(Files::isRegularFile)
-                .map(f -> f.getFileName().toString())
+                .map(f -> {
+                		final Path fn = f.getFileName();
+                		logger.info("Considering {}", f.toAbsolutePath().toString());
+                		return fn.toString();
+                	})
                 .filter(f -> f.matches(jobpat)).collect(Collectors.toList());
         } catch (IOException e) {
             final String msg = "Issue listing Job Log Files";
