@@ -22,7 +22,7 @@ public class VertxVentricleHttp extends AbstractVerticle {
 	@Override
 	public void start(Promise<Void> prm) {
 		final VertxOptions options = new VertxOptions();
-		options.setBlockedThreadCheckInterval(1000*60*60);	
+		options.setBlockedThreadCheckInterval(1000L*60*60);	
 		vertx = Vertx.vertx(options);
 		router = Router.router(getVertx());
 		registerRoutes();

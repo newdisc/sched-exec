@@ -6,4 +6,10 @@ public class UtilException extends RuntimeException{
     public UtilException(final String msg, Exception e) {
         super(msg, e);
     }
+	public UtilException(Throwable cause) {
+		super(cause);
+	}
+	public UtilException(String msg) {
+		super(msg);
+	}
 }

@@ -8,16 +8,16 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import nd.sched.job.JobReturn;
 import nd.sched.job.factory.IJobFactory;
-import nd.sched.job.factory.IJobRegistryPopulator;
+import nd.sched.job.factory.JobRegistryPopulator;
 import nd.sched.job.service.IJobExecutorService;
 
-public class JobExecutorController extends HandlerBase {
+public class JobExecutorController implements HandlerBase {
 	private static final Logger logger = LoggerFactory.getLogger(JobExecutorController.class);
 	private static final String CONTENT_TYPE = "content-type";
 	private static final String JSON_UTF8 = "application/json; charset=utf-8";
 	private IJobExecutorService executorService;
 	private IJobFactory jobFactory;
-	private IJobRegistryPopulator populator;
+	private JobRegistryPopulator populator;
 	private Router router;
 
 	@Override
@@ -68,7 +68,7 @@ public class JobExecutorController extends HandlerBase {
 	public void setJobFactory(IJobFactory jobFactory) {
 		this.jobFactory = jobFactory;
 	}
-	public void setPopulator(IJobRegistryPopulator jrp) {
+	public void setPopulator(JobRegistryPopulator jrp) {
 		populator = jrp;
 	}
 	public JobExecutorController setRouter(Router router) {

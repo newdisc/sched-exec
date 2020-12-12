@@ -8,7 +8,7 @@ import java.util.function.UnaryOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BaseJobExecutor implements IJobExecutor, Closeable {
+public class BaseJobExecutor implements Closeable {
 	private static final Logger logger = LoggerFactory.getLogger(BaseJobExecutor.class);
 	protected String name;
 	protected UnaryOperator<JobReturn> callBack;
@@ -21,15 +21,13 @@ public class BaseJobExecutor implements IJobExecutor, Closeable {
 			logger.error("Could not write to outputStream: {}", str, e);
 		}
 	}
-	@Override
 	public void executeAsync(String argumentString, UnaryOperator<JobReturn> callBack) {
+		logger.debug("Execution parameters: {}", argumentString);
 		this.callBack = callBack;
 	}
-	@Override
 	public String getName() {
 		return name;
 	}
-	@Override
 	public UnaryOperator<JobReturn> getCallback() {
 		return callBack;
 	}
@@ -41,9 +39,11 @@ public class BaseJobExecutor implements IJobExecutor, Closeable {
 	public void close() throws IOException {
 		oStream.close();
 	}
-	@Override
-	public IJobExecutor setStream(OutputStream os) {
+	public BaseJobExecutor setStream(OutputStream os) {
 		oStream = os;
 		return this;
+	}
+	public OutputStream getStream() {
+		return oStream;
 	}
 }

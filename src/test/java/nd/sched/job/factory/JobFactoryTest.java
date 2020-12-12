@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nd.sched.job.BaseJobExecutor;
-import nd.sched.job.IJobExecutor;
 import nd.sched.job.JobReturn;
 import nd.sched.job.JobReturn.JobStatus;
 
@@ -18,15 +17,15 @@ class JobFactoryTest {
     private JobFactory jobFactory = new JobFactory();
 
     @BeforeEach
-    public void init(){
+    void init(){
         final BaseJobExecutor je = new BaseJobExecutor();
         je.setName("Sample");
         jobFactory.registerJobExecutor("Sample", je);
     }
     
     @Test
-    public void executeTest(){
-        final IJobExecutor je = jobFactory.getJobExecutor("Sample");
+    void executeTest(){
+        final BaseJobExecutor je = jobFactory.getJobExecutor("Sample");
         je.executeAsync("Arguments1", j -> {
             JobReturn jr = j; 
             logger.info("Job Return: {}", jr.getReturnValue());

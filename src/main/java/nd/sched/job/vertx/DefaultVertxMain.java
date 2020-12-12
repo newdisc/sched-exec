@@ -9,11 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
-import nd.sched.job.factory.IJobFactory;
-import nd.sched.job.factory.IJobRegistryPopulator;
 import nd.sched.job.factory.JobFactory;
 import nd.sched.job.factory.JobRegistryPopulator;
 import nd.sched.job.service.JobExecutorService;
+import nd.sched.util.UtilException;
 
 public class DefaultVertxMain {
 	static {
@@ -35,16 +34,17 @@ public class DefaultVertxMain {
 		Vertx.vertx().deployVerticle(jev, q::offer);
 		final AsyncResult<String> result = q.take();
 		if (result.failed()) {
-		    throw new RuntimeException(result.cause());
+		    throw new UtilException(result.cause());
 		}
 	}
 	public static JobExecutorController initJobController() {
 		final Properties props = new Properties();
-		final IJobFactory jf = new JobFactory();
+		final JobFactory jf = new JobFactory();
+		jf.setConfig(props);
 		final JobExecutorService je = new JobExecutorService();
 		je.setConfig(props);
 		je.setJobFactory(jf);
-		final IJobRegistryPopulator jrp = new JobRegistryPopulator().setFactory(jf);
+		final JobRegistryPopulator jrp = new JobRegistryPopulator().setFactory(jf);
 		jrp.setConfiguration(props);
 		jrp.registerJobs();
 		final JobExecutorController jec = new JobExecutorController();
