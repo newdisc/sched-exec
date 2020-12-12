@@ -1,11 +1,14 @@
 package nd.sched.job.vertx;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.JobReturn;
 import nd.sched.job.factory.IJobFactory;
 import nd.sched.job.factory.JobRegistryPopulator;
@@ -43,9 +46,11 @@ public class JobExecutorController implements HandlerBase {
 	}
 	public void list(final RoutingContext rc){
 		logger.info("Job List: ");
+		final List<BaseJobExecutor> jobs = jobFactory.list();
+		final String jobList = Json.encodePrettily(jobs);
 		rc.response()
 	      .putHeader(CONTENT_TYPE, JSON_UTF8)
-	      .end(Json.encodePrettily(jobFactory.list()));
+	      .end(jobList);
 	}
 	public void logs(final RoutingContext rc){
 		final String pattern = rc.request().getParam("pattern");

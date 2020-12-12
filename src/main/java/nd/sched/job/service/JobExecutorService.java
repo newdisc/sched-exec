@@ -31,6 +31,7 @@ public class JobExecutorService implements IJobExecutorService {
 	@Override
 	public void initiateExecute(String triggerName, String jobName, String arguments,
 			UnaryOperator<JobReturn> callBack) {
+		logger.info("===Executing: {}", triggerName);
         final BaseJobExecutor job = jobFactory.getJobExecutor(jobName);
         if (null == job) {
         	handleError("Job NOT found: {}, {}", jobName, callBack);

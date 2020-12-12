@@ -11,6 +11,8 @@ import java.util.function.UnaryOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.JobReturn;
 import nd.sched.job.JobReturn.JobStatus;
@@ -19,6 +21,7 @@ public class CommandJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
         "nd.sched.job.service.run." + CommandJobExecutor.class.getSimpleName());
 
+    @JsonIgnore
     private final List<String> osCommand;
     private String fullCommand;
 

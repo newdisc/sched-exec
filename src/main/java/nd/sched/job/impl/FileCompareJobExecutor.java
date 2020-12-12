@@ -10,6 +10,8 @@ import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import nd.data.stream.DataStream;
 import nd.data.stream.StringToInputStream;
 import nd.sched.job.BaseJobExecutor;
@@ -19,6 +21,8 @@ import nd.sched.job.JobReturn.JobStatus;
 public class FileCompareJobExecutor extends BaseJobExecutor {
 	private static final Logger logger = LoggerFactory.getLogger("nd.sched.job.service.run." + 
 			FileCompareJobExecutor.class.getSimpleName());
+	private String template;
+	@JsonIgnore
 	private String templateText;
 
 	@Override
@@ -44,9 +48,11 @@ public class FileCompareJobExecutor extends BaseJobExecutor {
         callBack.apply(jr);
 	}
 
-	public FileCompareJobExecutor setTemplate(String template) {
+	public FileCompareJobExecutor setTemplate(String templ) {
+		this.template = templ;
 		final String CLASSPATH = "classpath:/";
 		templateText = fileToString(CLASSPATH + template);
+		logger.debug("Set Template {} : text : {}", template, templateText);
 		return this;
 	}
 

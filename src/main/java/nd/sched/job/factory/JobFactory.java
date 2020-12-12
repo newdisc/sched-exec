@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -66,8 +65,8 @@ public class JobFactory implements IJobFactory, IConfigurable, Closeable {
         }
     }
 	@Override
-	public Collection<BaseJobExecutor> list() {
-		return registry.values();
+	public List<BaseJobExecutor> list() {
+		return new ArrayList<BaseJobExecutor>(registry.values());
 	}
 	@Override
 	public BaseJobExecutor get(final String name) {

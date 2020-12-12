@@ -46,7 +46,7 @@ public class VertxVentricleHttp extends AbstractVerticle {
 	}
 
 	public void registerRoutes() {
-		router.route().handler(LoggerHandler.create());
+		//router.route().handler(LoggerHandler.create());
 		final StaticHandler sh = StaticHandler.create("./logs").setDirectoryListing(true);
 		router.route("/api/logs/*").handler(sh);
 		router.route("/api/shutdown").handler(rc -> vertx.close());

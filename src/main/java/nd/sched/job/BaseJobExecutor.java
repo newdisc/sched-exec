@@ -8,9 +8,12 @@ import java.util.function.UnaryOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class BaseJobExecutor implements Closeable {
 	private static final Logger logger = LoggerFactory.getLogger(BaseJobExecutor.class);
 	protected String name;
+	@JsonIgnore
 	protected UnaryOperator<JobReturn> callBack;
 	protected OutputStream oStream;
 
