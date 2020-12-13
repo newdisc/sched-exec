@@ -50,7 +50,7 @@ public class QuartzService implements Closeable {
         }
 	}
 	
-	public class QSJobDetail implements Job {
+	public static class QSJobDetail implements Job {
 		@Override
 		public void execute(JobExecutionContext context) throws JobExecutionException {
 			final Date nft = context.getNextFireTime();
@@ -73,7 +73,7 @@ public class QuartzService implements Closeable {
 		}
 	}
 
-	public void addJob(TimerJobExecutor tje) {
+	public String addJob(TimerJobExecutor tje) {
 		final String condition = tje.getCronCondition();
         final String name = tje.getName() + "_quartz";
         final JobDataMap jobDataMap = new JobDataMap();
@@ -95,12 +95,13 @@ public class QuartzService implements Closeable {
         try {
             Date dt = scheduler.scheduleJob(jd, trg);
 			final String nftstr = "Next Firetime: " + DFORMAT.format(dt);
-			tje.writeSafe(nftstr.getBytes());
             logger.info("Scheduled job: {} with schedule: {} and date: {}", 
                 name, condition, dt);
+            return nftstr;
         } catch (SchedulerException e) {
             final String msg = "Unable to add time schedule for job: " + name;
             logger.error(msg, e);
+            return msg;
         }
     }
 }

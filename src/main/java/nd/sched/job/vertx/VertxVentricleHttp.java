@@ -56,6 +56,8 @@ public class VertxVentricleHttp extends AbstractVerticle {
 			handler.setRouter(handlerRouter);
 			router.mountSubRouter(entry.getKey(), handlerRouter);
 		});
+		router.route("/ui/*").handler(rc -> rc.reroute("/index.html"));
+		router.route().handler(StaticHandler.create("public"));
 	}
 	public VertxVentricleHttp addHandler(final String path, final HandlerBase handler) {
 		handlers.put(path, handler);

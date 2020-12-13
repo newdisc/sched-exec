@@ -4,6 +4,7 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ import io.vertx.core.Vertx;
 import nd.sched.job.factory.JobFactory;
 import nd.sched.job.factory.JobRegistryPopulator;
 import nd.sched.job.service.JobExecutorService;
+import nd.sched.job.service.QuartzService;
 import nd.sched.util.UtilException;
 
 public class DefaultVertxMain {
@@ -37,20 +39,23 @@ public class DefaultVertxMain {
 		    throw new UtilException(result.cause());
 		}
 	}
-	public static JobExecutorController initJobController() {
+	public static JobExecutorController initJobController() throws SchedulerException {
 		final Properties props = new Properties();
 		final JobFactory jf = new JobFactory();
 		jf.setConfig(props);
 		final JobExecutorService je = new JobExecutorService();
 		je.setConfig(props);
 		je.setJobFactory(jf);
+		final QuartzService qs = new QuartzService();
 		final JobRegistryPopulator jrp = new JobRegistryPopulator().setFactory(jf);
 		jrp.setConfiguration(props);
+		jrp.setQuartzService(qs);
 		jrp.registerJobs();
 		final JobExecutorController jec = new JobExecutorController();
 		jec.setExecutorService(je);
 		jec.setJobFactory(jf);
 		jec.setPopulator(jrp);
+		
 		return jec;
 	}
 }

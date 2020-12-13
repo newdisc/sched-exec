@@ -15,6 +15,7 @@ import nd.sched.job.impl.CommandJobExecutor;
 import nd.sched.job.impl.FileCompareJobExecutor;
 import nd.sched.job.impl.JavaJobExecutor;
 import nd.sched.job.impl.TimerJobExecutor;
+import nd.sched.job.service.QuartzService;
 import nd.sched.util.UtilException;
 
 public class JobRegistryPopulator {
@@ -22,6 +23,7 @@ public class JobRegistryPopulator {
     private static final String EXECUTORS_FILE = "nd.sched.job.executors";
     private Properties configuration;
     private IJobFactory jobFactory;
+    private QuartzService quartzService;
 
 	public JobRegistryPopulator setFactory(IJobFactory jf) {
         jobFactory = jf;
@@ -41,6 +43,7 @@ public class JobRegistryPopulator {
     		return;
     	}
     	try (final CSVReader reader = new CSVReader(new FileReader(filename))){
+        	logger.info("File being used: {}", fileh.getCanonicalPath());
     		reader.skip(1);//header
     		reader.forEach(line -> 
     			registerExecutor(line[0], line[1], Arrays.copyOfRange(line, 2, line.length))
@@ -73,7 +76,7 @@ public class JobRegistryPopulator {
 
 	protected void registerCronJob(final String name, final String cron, final String tz) {
 		final TimerJobExecutor tje = new TimerJobExecutor();
-		tje.setCronCondition(cron).setTimeZone(tz).setName(name);
+		tje.setCronCondition(cron).setTimeZone(tz).setQuartzService(quartzService).setName(name);
 		jobFactory.registerJobExecutor(name, tje);
 	}
 
@@ -93,5 +96,9 @@ public class JobRegistryPopulator {
 		final CommandJobExecutor cje = new CommandJobExecutor();
 		cje.setFullCommand(cmd).setName(name);
 		jobFactory.registerJobExecutor(name, cje);
+	}
+
+	public void setQuartzService(QuartzService quartzService) {
+		this.quartzService = quartzService;
 	}
 }
