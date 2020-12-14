@@ -12,9 +12,11 @@ import nd.sched.job.service.QuartzService;
 
 public class TimerJobExecutor extends BaseJobExecutor {
 	private static final Logger logger = LoggerFactory.getLogger(TimerJobExecutor.class);
+	public static final String TYPE = "CronJob";
 	private String cronCondition;
 	private String timeZone;
 	private QuartzService quartzService;
+	private boolean stopped = false;
 	@Override
     public void executeAsync(String argumentString, UnaryOperator<JobReturn> callBack) {
     	super.executeAsync(argumentString, callBack);
@@ -25,6 +27,14 @@ public class TimerJobExecutor extends BaseJobExecutor {
 		jr.setJobStatus(JobStatus.RUNNING);
 		logger.info("Next Run time of the job is: {}", nextJobTime);
         callBack.apply(jr);
+	}
+	@Override
+	public void stop() {
+		super.stop();
+		stopped = true;
+		quartzService.stop(this);
+		logger.info("Timer should have stopped");
+		quartzService.list();
 	}
 	public String getCronCondition() {
 		return cronCondition;
@@ -43,5 +53,8 @@ public class TimerJobExecutor extends BaseJobExecutor {
 	public TimerJobExecutor setQuartzService(QuartzService quartzService) {
 		this.quartzService = quartzService;
 		return this;
+	}
+	public boolean isStopped() {
+		return stopped;
 	}
 }

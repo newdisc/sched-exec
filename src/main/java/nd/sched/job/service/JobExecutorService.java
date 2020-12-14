@@ -105,6 +105,16 @@ public class JobExecutorService implements IJobExecutorService {
 		return jr;
 	}
 	@Override
+	public boolean stop(String triggerName, String jobName) {
+		BaseJobExecutor job = jobFactory.get(jobName);
+		job.stop();
+		return true;
+	}
+	@Override
+	public BaseJobExecutor getDetails(final String triggerName, final String jobName) {
+		return jobFactory.getJobExecutor(jobName);
+	}
+	@Override
 	public IConfigurable setConfig(Properties props) {
 		properties = props;
 		return this;

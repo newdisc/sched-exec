@@ -20,6 +20,7 @@ import nd.sched.job.JobReturn.JobStatus;
 public class CommandJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
         "nd.sched.job.service.run." + CommandJobExecutor.class.getSimpleName());
+    public final static String TYPE = "CommandJob";
 
     @JsonIgnore
     private final List<String> osCommand;

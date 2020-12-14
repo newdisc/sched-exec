@@ -11,6 +11,7 @@ import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.impl.CommandJobExecutor;
 import nd.sched.job.impl.FileCompareJobExecutor;
 import nd.sched.job.impl.JavaJobExecutor;
@@ -55,47 +56,53 @@ public class JobRegistryPopulator {
     }
 
 	public JobRegistryPopulator registerExecutor(final String type, final String name, final String[] arguments) {
+		final BaseJobExecutor bje;
 		switch (type) {
-		case "CommandJob":
-			registerCommandJob(name, arguments[0]);
+		case CommandJobExecutor.TYPE:
+			bje = registerCommandJob(name, arguments[0]);
 			break;
-		case "JavaJob":
-			registerJavaJob(name, arguments[0]);
+		case JavaJobExecutor.TYPE:
+			bje = registerJavaJob(name, arguments[0]);
 			break;
-		case "CompareJob":
-			registerFileCompareJob(name, arguments[0]);
+		case FileCompareJobExecutor.TYPE:
+			bje = registerFileCompareJob(name, arguments[0]);
 			break;
-		case "CronJob":
-			registerCronJob(name, arguments[0], arguments[1]);
+		case TimerJobExecutor.TYPE:
+			bje = registerCronJob(name, arguments[0], arguments[1]);
 			break;
 		default:
 			throw new UtilException("Unknown Type: " + type);
 		}
+		bje.setType(type);
 		return this;
 	}
 
-	protected void registerCronJob(final String name, final String cron, final String tz) {
+	protected TimerJobExecutor registerCronJob(final String name, final String cron, final String tz) {
 		final TimerJobExecutor tje = new TimerJobExecutor();
 		tje.setCronCondition(cron).setTimeZone(tz).setQuartzService(quartzService).setName(name);
 		jobFactory.registerJobExecutor(name, tje);
+		return tje;
 	}
 
-	protected void registerFileCompareJob(final String name, final String template) {
+	protected FileCompareJobExecutor registerFileCompareJob(final String name, final String template) {
 		final FileCompareJobExecutor fcje = new FileCompareJobExecutor();
 		fcje.setTemplate(template).setName(name);
 		jobFactory.registerJobExecutor(name, fcje);
+		return fcje;
 	}
 
-	protected void registerJavaJob(final String name, final String mc) {
+	protected JavaJobExecutor registerJavaJob(final String name, final String mc) {
 		final JavaJobExecutor jje = new JavaJobExecutor();
 		jje.setMainClass(mc).setName(name);
 		jobFactory.registerJobExecutor(name, jje);
+		return jje;
 	}
 
-	protected void registerCommandJob(final String name, final String cmd) {
+	protected CommandJobExecutor registerCommandJob(final String name, final String cmd) {
 		final CommandJobExecutor cje = new CommandJobExecutor();
 		cje.setFullCommand(cmd).setName(name);
 		jobFactory.registerJobExecutor(name, cje);
+		return cje;
 	}
 
 	public void setQuartzService(QuartzService quartzService) {

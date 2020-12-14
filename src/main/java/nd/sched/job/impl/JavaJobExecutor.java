@@ -15,6 +15,7 @@ import nd.sched.job.JobReturn.JobStatus;
 public class JavaJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
         "nd.sched.job.service.run." + JavaJobExecutor.class.getSimpleName());
+	public static final String TYPE = "JavaJob";
 
     private String mainClass;
     private Method mainMethod;

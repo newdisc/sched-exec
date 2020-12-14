@@ -21,6 +21,7 @@ import nd.sched.job.JobReturn.JobStatus;
 public class FileCompareJobExecutor extends BaseJobExecutor {
 	private static final Logger logger = LoggerFactory.getLogger("nd.sched.job.service.run." + 
 			FileCompareJobExecutor.class.getSimpleName());
+	public static final String TYPE = "CompareJob";
 	private String template;
 	@JsonIgnore
 	private String templateText;

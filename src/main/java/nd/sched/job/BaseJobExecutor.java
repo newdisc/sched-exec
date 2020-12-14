@@ -16,6 +16,7 @@ public class BaseJobExecutor implements Closeable {
 	@JsonIgnore
 	protected UnaryOperator<JobReturn> callBack;
 	protected OutputStream oStream;
+	protected String type;
 
 	public void writeSafe(final byte[] str) {
 		try {
@@ -38,6 +39,9 @@ public class BaseJobExecutor implements Closeable {
 		this.name = name;
 		return this;
 	}
+	public void stop() {
+		logger.info("Stopping Job: {}", name);
+	}
 	@Override
 	public void close() throws IOException {
 		oStream.close();
@@ -48,5 +52,11 @@ public class BaseJobExecutor implements Closeable {
 	}
 	public OutputStream getStream() {
 		return oStream;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 }
