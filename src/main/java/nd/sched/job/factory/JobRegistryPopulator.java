@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import nd.sched.job.BaseJobExecutor;
 import nd.sched.job.impl.CommandJobExecutor;
 import nd.sched.job.impl.FileCompareJobExecutor;
+import nd.sched.job.impl.HttpTableClientExecutor;
 import nd.sched.job.impl.JavaJobExecutor;
 import nd.sched.job.impl.TimerJobExecutor;
 import nd.sched.job.service.QuartzService;
@@ -70,11 +71,41 @@ public class JobRegistryPopulator {
 		case TimerJobExecutor.TYPE:
 			bje = registerCronJob(name, arguments[0], arguments[1]);
 			break;
+		case HttpTableClientExecutor.TYPE:
+			bje = registerHttpTableJob(name, arguments);
+			break;
 		default:
 			throw new UtilException("Unknown Type: " + type);
 		}
 		bje.setType(type);
 		return this;
+	}
+
+	private HttpTableClientExecutor registerHttpTableJob(String name, String[] arguments) {
+		final HttpTableClientExecutor hce = new HttpTableClientExecutor();
+		for (int i = 0; i < arguments.length; i++) {
+			switch(i) {
+			case 0:
+				hce.setUrl(arguments[i]);
+				break;
+			case 1:
+				hce.setTableSelector(arguments[i]);
+				break;
+			case 2:
+				hce.setColumn(arguments[i]);
+				break;
+			case 3:
+				hce.setRow(arguments[i]);
+				break;
+			case 4:
+				hce.setHeader(arguments[i]);
+				break;
+			default:
+				break;
+			}
+		}
+		jobFactory.registerJobExecutor(name, hce);
+		return hce;
 	}
 
 	protected TimerJobExecutor registerCronJob(final String name, final String cron, final String tz) {
