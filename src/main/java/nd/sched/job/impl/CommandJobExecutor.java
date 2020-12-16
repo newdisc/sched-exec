@@ -20,7 +20,7 @@ import nd.sched.job.JobReturn.JobStatus;
 public class CommandJobExecutor extends BaseJobExecutor {
     private static final Logger logger = LoggerFactory.getLogger(
         "nd.sched.job.service.run." + CommandJobExecutor.class.getSimpleName());
-    public final static String TYPE = "CommandJob";
+    public static final String TYPE = "CommandJob";
 
     @JsonIgnore
     private final List<String> osCommand;
@@ -56,7 +56,6 @@ public class CommandJobExecutor extends BaseJobExecutor {
     public int execute(final ProcessBuilder pb) {
         try {
         	pb.redirectErrorStream(true);
-        	//pb.redirectOutput();
             final Process process = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;

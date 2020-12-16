@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-public class UtilExceptionTest {
+class UtilExceptionTest {
 	@Test
-	public void testCtr() {
+	void testCtr() {
 		final UtilException ue = new UtilException("Test", null);
 		assertNull(ue.getCause());
 	}

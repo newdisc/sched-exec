@@ -1,6 +1,7 @@
 package nd.sched.job.impl;
 
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class HttpTableClientExecutor extends BaseJobExecutor {
 			}
         	stream.loadStream();
         	stream.streamLines().map(ln -> {
-        		final String str = ln.toString();
+        		final String str = ln.stream().collect(Collectors.joining("\",\"", "\"", "\""));
         		logger.info(str);
         		return str;
         	}).map(String::getBytes).forEach(this::writeSafe);

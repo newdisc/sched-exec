@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import nd.sched.job.JobReturn;
 import nd.sched.job.JobReturn.JobStatus;
 
-public class JavaJobExecutorTest {
+class JavaJobExecutorTest {
     private static final Logger logger = LoggerFactory.getLogger(JavaJobExecutorTest.class);
 
     private final JavaJobExecutor command = new JavaJobExecutor();
@@ -23,7 +23,7 @@ public class JavaJobExecutorTest {
     }
 
     @Test
-    public void execTest(){
+    void execTest(){
         command.executeAsync("a b c", j -> {
             JobReturn jr = j; 
             logger.info("Job Return: {}", jr.getReturnValue());
